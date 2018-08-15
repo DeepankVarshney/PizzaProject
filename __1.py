@@ -28,7 +28,7 @@ def a():
     print("Work In Progress.")
 
 
-def Input():
+def Input_1():
 
     global SignUp_entry_1
     global SignUp_entry_2
@@ -37,6 +37,15 @@ def Input():
     e2 = SignUp_entry_2.get()
 
     data_entry(e1, e2)
+
+def Input_2():
+
+    global SignIn_entry_1
+
+    e1 = SignIn_entry_1.get()
+
+    name_retrival(e1)
+
 
 
 #The Home Window
@@ -80,7 +89,8 @@ def Step_3_Cust():
 
     label_1 = Label(frame_3, text = "Enter your ID")
     SignIn_entry_1 = Entry(frame_3)
-    button_1 = Button(frame_3, text = "Submit", command = Input)
+    print(SignIn_entry_1)
+    button_1 = Button(frame_3, text = "Submit", command = Input_2)
 
     frame_3.pack()
     label_1.grid(row = 0, sticky = E)
@@ -99,7 +109,7 @@ def Step_4_Cust():
     label_2 = Label(frame_4, text = "Name")
     SignUp_entry_1 = Entry(frame_4)
     SignUp_entry_2 = Entry(frame_4)
-    button_1 = Button(frame_4, text = "Submit", command = Input)
+    button_1 = Button(frame_4, text = "Submit", command = Input_1)
 
     frame_4.pack()
     label_1.grid(row = 0, sticky = E)
@@ -146,9 +156,14 @@ def data_entry(id_, name_ ):
 
 def name_retrival(id_):
 
+    name = ""
     id = id_
-    c.execute("SELECT customer_name FROM customer_all WHERE customer_id = id")
-    print(customer_name)
+
+    print(name)
+    c.execute("SELECT customer_name FROM customer_all WHERE customer_id = ?", (id,))
+    name = c.fetchone()
+    print(name)
+    
 
 def Cust_Input():
 
