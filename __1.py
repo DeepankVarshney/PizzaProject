@@ -109,6 +109,25 @@ def Step_4_Cust():
     button_1.grid(columnspan = 2)
 
 
+#User Welcome
+def Step_5_Cust(name_):
+
+    global root, frame_3, frame_4, frame_5
+
+    frame_3.destroy()
+    frame_4.destroy()
+
+    var_1 = StringVar()
+    var_1.set()
+
+    label_1 = Label (frame_5, textvariable = var_1,)
+    button_1 = Button(frame_5, text = "New Order", bg = "gainsboro", fg = "Black", command = a)
+    button_1 = Button(frame_5, text = "Order History", bg = "gainsboro", fg = "Black", command = a)
+
+    frame_5.pack()
+    label_1.pack(fill = X)
+    button_1.pack()
+    button_2.pack()
 
 
 def create_table():
@@ -121,6 +140,15 @@ def data_entry(id_, name_ ):
 
     c.execute("INSERT INTO customer_all(customer_id, customer_name) VALUES(?, ?)", (id, name))
     conn.commit()
+
+    name_retrival(id)
+
+
+def name_retrival(id_):
+
+    id = id_
+    c.execute("SELECT customer_name FROM customer_all WHERE customer_id = id")
+    print(customer_name)
 
 def Cust_Input():
 
