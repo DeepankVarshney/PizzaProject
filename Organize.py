@@ -25,7 +25,7 @@ c = conn.cursor()
 
 def a():
 
-    print("Work In Progress.")
+    print("Work In afProgress.")
 
 
 def Input():
