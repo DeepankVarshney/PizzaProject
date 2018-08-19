@@ -128,7 +128,7 @@ def Step_5_Cust(name_):
     frame_4.destroy()
 
     var_1 = StringVar()
-    var_1.set()
+    var_1.set("Welcome " + str(name_[0]) )
 
     label_1 = Label (frame_5, textvariable = var_1,)
     button_1 = Button(frame_5, text = "New Order", bg = "gainsboro", fg = "Black", command = a)
@@ -138,6 +138,13 @@ def Step_5_Cust(name_):
     label_1.pack(fill = X)
     button_1.pack()
     button_2.pack()
+
+
+def Step_6_Cust():
+
+    global root, frame
+
+
 
 
 def create_table():
@@ -162,8 +169,9 @@ def name_retrival(id_):
     print(name)
     c.execute("SELECT customer_name FROM customer_all WHERE customer_id = ?", (id,))
     name = c.fetchone()
-    print(name)
-    
+    Step_5_Cust(name)
+
+
 
 def Cust_Input():
 
