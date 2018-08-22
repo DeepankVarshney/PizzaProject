@@ -1,5 +1,8 @@
-import sqlite3      #Database
-from tkinter import *       #GUI
+import sqlite3                  #Database
+import tkinter.ttk as ttk       #Seperator Line
+import PIL.Image as img  #PIL
+import PIL.ImageTk as imgtk  #PIL
+from tkinter import *           #GUI
 
 root = Tk()
 frame_1 = Frame(root)
@@ -7,6 +10,9 @@ frame_2 = Frame(root)
 frame_3 = Frame(root)
 frame_4 = Frame(root)
 frame_5 = Frame(root)
+frame_6 = Frame(root)
+frame_7 = Frame(root)
+frame_8 = Frame(root)
 
 
 conn = sqlite3.connect('pizza.db')
@@ -131,8 +137,8 @@ def Step_5_Cust(name_):
     var_1.set("Welcome " + str(name_[0]) )
 
     label_1 = Label (frame_5, textvariable = var_1,)
-    button_1 = Button(frame_5, text = "New Order", bg = "gainsboro", fg = "Black", command = a)
-    button_1 = Button(frame_5, text = "Order History", bg = "gainsboro", fg = "Black", command = a)
+    button_1 = Button(frame_5, text = "New Order", bg = "gainsboro", fg = "Black", command = Step_6_Cust)
+    button_2 = Button(frame_5, text = "Order History", bg = "gainsboro", fg = "Black", command = a)
 
     frame_5.pack()
     label_1.pack(fill = X)
@@ -140,10 +146,44 @@ def Step_5_Cust(name_):
     button_2.pack()
 
 
+#Predefined Menu
 def Step_6_Cust():
 
-    global root, frame
+    global root, frame_5
 
+    frame_5.destroy()
+
+    a_1 = img.open("Icons/1.png")
+    a_1 = a_1.resize((100, 100), img.ANTIALIAS)
+    b_1 = imgtk.PhotoImage(a_1)
+    a_2 = img.open("Icons/2.png")
+    a_2 = a_2.resize((100, 100), img.ANTIALIAS)
+    b_2 = imgtk.PhotoImage(a_2)
+    a_3 = img.open("Icons/3.png")
+    a_3 = a_3.resize((100, 100), img.ANTIALIAS)
+    b_3 = imgtk.PhotoImage(a_3)
+    a_4 = img.open("Icons/4.png")
+    a_4 = a_4.resize((100, 100), img.ANTIALIAS)
+    b_4 = imgtk.PhotoImage(a_4)
+    label_1 = Label(frame_6, text = "Veg Pizzas")
+    label_2 = Label(frame_6, image = b_1)
+    label_2.image = b_1
+    label_3 = Label(frame_6, image = b_2)
+    label_3.image = b_2
+    label_4 = Label(frame_6, image = b_3)
+    label_4.image = b_3
+    label_5 = Label(frame_6, image = b_4)
+    label_5.image = b_4
+
+
+    frame_6.pack()
+    label_1.grid(row = 0, sticky = N)
+    label_2.grid(row = 3, column = 0)
+    label_3.grid(row = 3, column = 1)
+    label_4.grid(row = 3, column = 2)
+    label_5.grid(row = 3, column = 3)
+
+    ttk.Separator(root).place(x=0, y=200, relwidth=5)
 
 
 
