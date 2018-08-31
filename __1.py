@@ -4,7 +4,11 @@ import PIL.Image as img         #PIL
 import PIL.ImageTk as imgtk     #PIL
 from tkinter import *           #GUI
 
+#RootWindow
 root = Tk()
+
+
+#Frame Globals
 frame_1 = Frame(root)
 frame_2 = Frame(root)
 frame_3 = Frame(root)
@@ -24,7 +28,6 @@ frame_16 = Frame(root)
 frame_17= Frame(root)
 
 
-
 conn = sqlite3.connect('pizza.db')
 c = conn.cursor()
 
@@ -39,11 +42,13 @@ c = conn.cursor()
 # toppings_lar = {'pepperoni': 75, 'meatballs': 100, 'mushroom': 85, 'onions': 65, 'sausage': 105, 'bacon': 125, 'paneer': 115, 'corn': 70, 'jalapeno': 95, 'olive': 110}
 
 
+#Display Work In Progress
 def a():
 
     print("Work In Progress.")
 
 
+#Input for SignUp
 def Input_1():
 
     global SignUp_entry_1
@@ -54,6 +59,7 @@ def Input_1():
 
     data_entry(e1, e2)
 
+#Input for SignIn
 def Input_2():
 
     global SignIn_entry_1
@@ -63,8 +69,16 @@ def Input_2():
     name_retrival(e1)
 
 
+#DropDown-Input
+def DropDown_Input():
 
-#The Home Window
+    global Size, Quantity
+
+
+
+    cust_choice
+
+#The Home Frame
 def Step_1_Cust():
 
     global root, frame_1
@@ -219,49 +233,49 @@ def Step_6_Cust():
     a_16 = a_16.resize((100, 100), img.ANTIALIAS)
     b_16 = imgtk.PhotoImage(a_16)
 
-    #Veg_Pizzas-Ready
-    label_1 = Label(frame_6, text = "Veg Pizzas")
-    label_2 = Label(frame_6, image = b_1)
-    label_2.image = b_1
-    label_3 = Label(frame_6, image = b_2)
-    label_3.image = b_2
-    label_4 = Label(frame_6, image = b_3)
-    label_4.image = b_3
-    label_5 = Label(frame_6, image = b_4)
-    label_5.image = b_4
+    #Veg_Pizzas-Image_Ready
+    label_h1 = Label(frame_6, text = "Veg Pizzas")
+    label_1 = Label(frame_6, image = b_1)
+    label_1.image = b_1
+    label_2 = Label(frame_6, image = b_2)
+    label_2.image = b_2
+    label_3 = Label(frame_6, image = b_3)
+    label_3.image = b_3
+    label_4 = Label(frame_6, image = b_4)
+    label_4.image = b_4
 
-    #NonVeg_Pizzas-Ready
-    label_6 = Label(frame_7, text = "Non - Veg Pizzas")
-    label_7 = Label(frame_7, image = b_5)
-    label_7.image = b_5
-    label_8 = Label(frame_7, image = b_6)
-    label_8.image = b_6
-    label_9 = Label(frame_7, image = b_7)
-    label_9.image = b_7
-    label_10 = Label(frame_7, image = b_8)
-    label_10.image = b_8
+    #NonVeg_Pizzas-Image_Ready
+    label_h2 = Label(frame_7, text = "Non - Veg Pizzas")
+    label_5 = Label(frame_7, image = b_5)
+    label_5.image = b_5
+    label_6 = Label(frame_7, image = b_6)
+    label_6.image = b_6
+    label_7 = Label(frame_7, image = b_7)
+    label_7.image = b_7
+    label_8 = Label(frame_7, image = b_8)
+    label_8.image = b_8
 
-    #Sides-Ready
-    label_11 = Label(frame_8, text = "Sides")
-    label_12 = Label(frame_8, image = b_9)
-    label_12.image = b_9
-    label_13 = Label(frame_8, image = b_10)
-    label_13.image = b_10
-    label_14 = Label(frame_8, image = b_11)
-    label_14.image = b_11
-    label_15 = Label(frame_8, image = b_12)
-    label_15.image = b_12
+    #Sides-Image_Ready
+    label_h3 = Label(frame_8, text = "Sides")
+    label_9 = Label(frame_8, image = b_9)
+    label_9.image = b_9
+    label_10 = Label(frame_8, image = b_10)
+    label_10.image = b_10
+    label_11 = Label(frame_8, image = b_11)
+    label_11.image = b_11
+    label_12 = Label(frame_8, image = b_12)
+    label_12.image = b_12
 
-    #Beverages-Ready
-    label_16 = Label(frame_9, text = "Beverages")
-    label_17 = Label(frame_9, image = b_13)
-    label_17.image = b_13
-    label_18 = Label(frame_9, image = b_14)
-    label_18.image = b_14
-    label_19 = Label(frame_9, image = b_15)
-    label_19.image = b_15
-    label_20 = Label(frame_9, image = b_16)
-    label_20.image = b_16
+    #Beverages-Image_Ready
+    label_h4 = Label(frame_9, text = "Beverages")
+    label_13 = Label(frame_9, image = b_13)
+    label_13.image = b_13
+    label_14 = Label(frame_9, image = b_14)
+    label_14.image = b_14
+    label_15 = Label(frame_9, image = b_15)
+    label_15.image = b_15
+    label_16 = Label(frame_9, image = b_16)
+    label_16.image = b_16
 
     #Spacing
     label_100 = Label(frame_6, text = " ")
@@ -269,44 +283,161 @@ def Step_6_Cust():
     label_300 = Label(frame_8, text = " ")
     label_400 = Label(frame_9, text = " ")
 
+    #Option-Menus
+    global Size, Quantity, Size_List, Quantity_List
+
+    Size_List = []
+    Quantity_List = []
+
+    #Generating Multiple StringVars
+    for i in range(0, 17):
+
+        Size = StringVar(root)
+        Size_List.append(Size)
+
+        Quantity = StringVar(root)
+        Quantity_List.append(Quantity)
+
+    option_1a = OptionMenu(frame_6, Size_List[1], "Small", "Medium", "Large")
+    option_1b = OptionMenu(frame_6, Quantity_List[1], "1", "2", "3")
+    option_2a = OptionMenu(frame_6, Size_List[2], "Small", "Medium", "Large")
+    option_2b = OptionMenu(frame_6, Quantity_List[2], "1", "2", "3")
+    option_3a = OptionMenu(frame_6, Size_List[3], "Small", "Medium", "Large")
+    option_3b = OptionMenu(frame_6, Quantity_List[3], "1", "2", "3")
+    option_4a = OptionMenu(frame_6, Size_List[4], "Small", "Medium", "Large")
+    option_4b = OptionMenu(frame_6, Quantity_List[4], "1", "2", "3")
+    option_5a = OptionMenu(frame_7, Size_List[5], "Small", "Medium", "Large")
+    option_5b = OptionMenu(frame_7, Quantity_List[5], "1", "2", "3")
+    option_6a = OptionMenu(frame_7, Size_List[6], "Small", "Medium", "Large")
+    option_6b = OptionMenu(frame_7, Quantity_List[6], "1", "2", "3")
+    option_7a = OptionMenu(frame_7, Size_List[7], "Small", "Medium", "Large")
+    option_7b = OptionMenu(frame_7, Quantity_List[7], "1", "2", "3")
+    option_8a = OptionMenu(frame_7, Size_List[8], "Small", "Medium", "Large")
+    option_8b = OptionMenu(frame_7, Quantity_List[8], "1", "2", "3")
+
+    option_9a = OptionMenu(frame_8, Size_List[9], "Small", "Medium", "Large")
+    option_9b = OptionMenu(frame_8, Quantity_List[9], "1", "2", "3")
+    option_10a = OptionMenu(frame_8, Size_List[10], "Small", "Medium", "Large")
+    option_10b = OptionMenu(frame_8, Quantity_List[10], "1", "2", "3")
+    option_11a = OptionMenu(frame_8, Size_List[11], "Small", "Medium", "Large")
+    option_11b = OptionMenu(frame_8, Quantity_List[11], "1", "2", "3")
+    option_12a = OptionMenu(frame_8, Size_List[12], "Small", "Medium", "Large")
+    option_12b = OptionMenu(frame_8, Quantity_List[12], "1", "2", "3")
+    option_13a = OptionMenu(frame_9, Size_List[13], "Small", "Medium", "Large")
+    option_13b = OptionMenu(frame_9, Quantity_List[13], "1", "2", "3")
+    option_14a = OptionMenu(frame_9, Size_List[14], "Small", "Medium", "Large")
+    option_14b = OptionMenu(frame_9, Quantity_List[14], "1", "2", "3")
+    option_15a = OptionMenu(frame_9, Size_List[15], "Small", "Medium", "Large")
+    option_15b = OptionMenu(frame_9, Quantity_List[15], "1", "2", "3")
+    option_16a = OptionMenu(frame_9, Size_List[16], "Small", "Medium", "Large")
+    option_16b = OptionMenu(frame_9, Quantity_List[16], "1", "2", "3")
+
+
+    #OK Buttons
+    button_1 = Button(frame_6, text="OK", command= a())
+    button_2 = Button(frame_6, text="OK", command= a())
+    button_3 = Button(frame_6, text="OK", command= a())
+    button_4 = Button(frame_6, text="OK", command= a())
+    button_5 = Button(frame_7, text="OK", command= a())
+    button_6 = Button(frame_7, text="OK", command= a())
+    button_7 = Button(frame_7, text="OK", command= a())
+    button_8 = Button(frame_7, text="OK", command= a())
+    button_9 = Button(frame_8, text="OK", command= a())
+    button_10 = Button(frame_8, text="OK", command= a())
+    button_11 = Button(frame_8, text="OK", command= a())
+    button_12 = Button(frame_8, text="OK", command= a())
+    button_13 = Button(frame_9, text="OK", command= a())
+    button_14 = Button(frame_9, text="OK", command= a())
+    button_15 = Button(frame_9, text="OK", command= a())
+    button_16 = Button(frame_9, text="OK", command= a())
+
+
     #Veg_Pizzas-Pack
     frame_6.pack()
-    label_1.grid(row = 0, columnspan = 4, sticky = N)
-    label_2.grid(row = 1, column = 0, padx = 20, pady = 20)
-    label_3.grid(row = 1, column = 1, padx = 20, pady = 20)
-    label_4.grid(row = 1, column = 2, padx = 20, pady = 20)
-    label_5.grid(row = 1, column = 3, padx = 20, pady = 20)
-    label_100.grid(row = 2, columnspan = 4)
-    ttk.Separator(root).place(x = 0, y = 160, relwidth=2)
+    label_h1.grid(row = 0, columnspan = 7, sticky = N)
+    label_1.grid(row = 1, rowspan = 3, column = 0, padx = 20, pady = 20)
+    option_1a.grid(row = 1, column = 1, sticky = S)
+    option_1b.grid(row = 2, column = 1, sticky = N)
+    button_1.grid(row = 3, column = 1)
+    label_2.grid(row = 1, rowspan = 3, column = 2, padx = 20, pady = 20)
+    option_2a.grid(row = 1, column = 3, sticky = S)
+    option_2b.grid(row = 2, column = 3, sticky = N)
+    button_2.grid(row = 3, column = 3)
+    label_3.grid(row = 1, rowspan = 3, column = 4, padx = 20, pady = 20)
+    option_3a.grid(row = 1, column = 5, sticky = S)
+    option_3b.grid(row = 2, column = 5, sticky = N)
+    button_3.grid(row = 3, column = 5)
+    label_4.grid(row = 1, rowspan = 3, column = 6, padx = 20, pady = 20)
+    option_4a.grid(row = 1, column = 7, sticky = S)
+    option_4b.grid(row = 2, column = 7, sticky = N)
+    button_4.grid(row = 3, column = 7)
+    label_100.grid(row = 4, columnspan = 7)
+    ttk.Separator(root).place(x = 0, y = 170, relwidth=2)
 
     #NonVeg_Pizzas-Pack
     frame_7.pack()
-    label_6.grid(row = 0, columnspan = 4, sticky = N)
-    label_7.grid(row = 1, column = 0, padx = 20, pady = 20)
-    label_8.grid(row = 1, column = 1, padx = 20, pady = 20)
-    label_9.grid(row = 1, column = 2, padx = 20, pady = 20)
-    label_10.grid(row = 1, column = 3, padx = 20, pady = 20)
-    label_200.grid(row = 2, columnspan = 4)
-    ttk.Separator(root).place(x = 0, y = 350, relwidth=2)
+    label_h2.grid(row = 0, columnspan = 7, sticky = N)
+    label_5.grid(row = 1, rowspan = 3, column = 0, padx = 20, pady = 20)
+    option_5a.grid(row = 1, column = 1, sticky = S)
+    option_5b.grid(row = 2, column = 1, sticky = N)
+    button_5.grid(row = 3, column = 1)
+    label_6.grid(row = 1, rowspan = 3, column = 2, padx = 20, pady = 20)
+    option_6a.grid(row = 1, column = 3, sticky = S)
+    option_6b.grid(row = 2, column = 3, sticky = N)
+    button_6.grid(row = 3, column = 3)
+    label_7.grid(row = 1, rowspan = 3, column = 4, padx = 20, pady = 20)
+    option_7a.grid(row = 1, column = 5, sticky = S)
+    option_7b.grid(row = 2, column = 5, sticky = N)
+    button_7.grid(row = 3, column = 5)
+    label_8.grid(row = 1, rowspan = 3, column = 6, padx = 20, pady = 20)
+    option_8a.grid(row = 1, column = 7, sticky = S)
+    option_8b.grid(row = 2, column = 7, sticky = N)
+    button_8.grid(row = 3, column = 7)
+    label_200.grid(row = 4, columnspan = 7)
+    ttk.Separator(root).place(x = 0, y = 360, relwidth=2)
 
     #Sides-Pack
     frame_8.pack()
-    label_11.grid(row = 0, columnspan = 4, sticky = N)
-    label_12.grid(row = 1, column = 0, padx = 20, pady = 20)
-    label_13.grid(row = 1, column = 1, padx = 20, pady = 20)
-    label_14.grid(row = 1, column = 2, padx = 20, pady = 20)
-    label_15.grid(row = 1, column = 3, padx = 20, pady = 20)
-    label_300.grid(row = 2, columnspan = 4)
+    label_h3.grid(row = 0, columnspan = 7, sticky = N)
+    label_9.grid(row = 1, rowspan = 3, column = 0, padx = 20, pady = 20)
+    option_9a.grid(row = 1, column = 1, sticky = S)
+    option_9b.grid(row = 2, column = 1, sticky = N)
+    button_9.grid(row = 3, column = 1)
+    label_10.grid(row = 1, rowspan = 3, column = 2, padx = 20, pady = 20)
+    option_10a.grid(row = 1, column = 3, sticky = S)
+    option_10b.grid(row = 2, column = 3, sticky = N)
+    button_10.grid(row = 3, column = 3)
+    label_11.grid(row = 1, rowspan = 3, column = 4, padx = 20, pady = 20)
+    option_11a.grid(row = 1, column = 5, sticky = S)
+    option_11b.grid(row = 2, column = 5, sticky = N)
+    button_11.grid(row = 3, column = 5)
+    label_12.grid(row = 1, rowspan = 3, column = 6, padx = 20, pady = 20)
+    option_12a.grid(row = 1, column = 7, sticky = S)
+    option_12b.grid(row = 2, column = 7, sticky = N)
+    button_12.grid(row = 3, column = 7)
+    label_300.grid(row = 4, columnspan = 7)
     ttk.Separator(root).place(x = 0, y = 540, relwidth=2)
 
-    #NonVeg_Pizzas-Pack
+    #Beverages-Pack
     frame_9.pack()
-    label_16.grid(row = 0, columnspan = 4, sticky = N)
-    label_17.grid(row = 1, column = 0, padx = 20, pady = 20)
-    label_18.grid(row = 1, column = 1, padx = 20, pady = 20)
-    label_19.grid(row = 1, column = 2, padx = 20, pady = 20)
-    label_20.grid(row = 1, column = 3, padx = 20, pady = 20)
-    label_200.grid(row = 2, columnspan = 4)
+    label_h4.grid(row = 0, columnspan = 7, sticky = N)
+    label_13.grid(row = 1, rowspan = 3, column = 0, padx = 20, pady = 20)
+    option_13a.grid(row = 1, column = 1, sticky = S)
+    option_13b.grid(row = 2, column = 1, sticky = N)
+    button_13.grid(row = 3, column = 1)
+    label_14.grid(row = 1, rowspan = 3, column = 2, padx = 20, pady = 20)
+    option_14a.grid(row = 1, column = 3, sticky = S)
+    option_14b.grid(row = 2, column = 3, sticky = N)
+    button_14.grid(row = 3, column = 3)
+    label_15.grid(row = 1, rowspan = 3, column = 4, padx = 20, pady = 20)
+    option_15a.grid(row = 1, column = 5, sticky = S)
+    option_15b.grid(row = 2, column = 5, sticky = N)
+    button_15.grid(row = 3, column = 5)
+    label_16.grid(row = 1, rowspan = 3, column = 6, padx = 20, pady = 20)
+    option_16a.grid(row = 1, column = 7, sticky = S)
+    option_16b.grid(row = 2, column = 7, sticky = N)
+    button_16.grid(row = 3, column = 7)
+    label_200.grid(row = 4, columnspan = 7)
     ttk.Separator(root).place(x = 0, y = 730, relwidth=2)
 
 
