@@ -21,13 +21,19 @@ frame_9 = Frame(root)
 frame_10 = Frame(root)
 frame_11 = Frame(root)
 frame_12 = Frame(root)
-frame_13= Frame(root)
+frame_13 = Frame(root)
 frame_14 = Frame(root)
 frame_15 = Frame(root)
 frame_16 = Frame(root)
-frame_17= Frame(root)
+frame_17 = Frame(root)
 
 
+#Dictionary Globals
+Dict_1 = {}
+Dict_2 = {}
+
+
+#Database Connetion
 conn = sqlite3.connect('pizza.db')
 c = conn.cursor()
 
@@ -40,6 +46,9 @@ c = conn.cursor()
 # toppings_per = {'pepperoni': 15, 'meatballs': 20, 'mushroom': 17, 'onions': 13, 'sausage': 21, 'bacon': 25, 'paneer': 23, 'corn': 14, 'jalapeno': 19, 'olive': 22}
 # toppings_reg = {'pepperoni': 45, 'meatballs': 60, 'mushroom': 42, 'onions': 39, 'sausage': 63, 'bacon': 75, 'paneer': 69, 'corn': 42, 'jalapeno': 57, 'olive': 66}
 # toppings_lar = {'pepperoni': 75, 'meatballs': 100, 'mushroom': 85, 'onions': 65, 'sausage': 105, 'bacon': 125, 'paneer': 115, 'corn': 70, 'jalapeno': 95, 'olive': 110}
+
+
+
 
 
 #Display Work In Progress
@@ -70,13 +79,19 @@ def Input_2():
 
 
 #DropDown-Input
-def DropDown_Input():
+def DropDown_Input(item):
 
-    global Size, Quantity
+    global Dict_1, Dict_2, Size_List, Quantity_List
 
+    a = Size_List[item].get()
+    b = Quantity_List[item].get()
 
+    Dict_1[a] = item
+    Dict_2[b] = item
 
-    cust_choice
+    print(Dict_1)
+    print(Dict_2)
+
 
 #The Home Frame
 def Step_1_Cust():
@@ -173,7 +188,7 @@ def Step_5_Cust(name_):
 #Predefined Menu
 def Step_6_Cust():
 
-    global root, frame_5, frame_6, frame_7, frame_8, frame_9
+    global root, frame_5, frame_6, frame_7, frame_8, frame_9, Size, Quantity, Size_List, Quantity_List
 
     frame_5.destroy()
 
@@ -283,13 +298,11 @@ def Step_6_Cust():
     label_300 = Label(frame_8, text = " ")
     label_400 = Label(frame_9, text = " ")
 
-    #Option-Menus
-    global Size, Quantity, Size_List, Quantity_List
 
+    #Generating Multiple StringVars
     Size_List = []
     Quantity_List = []
 
-    #Generating Multiple StringVars
     for i in range(0, 17):
 
         Size = StringVar(root)
@@ -298,6 +311,8 @@ def Step_6_Cust():
         Quantity = StringVar(root)
         Quantity_List.append(Quantity)
 
+
+    #Option-Menus
     option_1a = OptionMenu(frame_6, Size_List[1], "Small", "Medium", "Large")
     option_1b = OptionMenu(frame_6, Quantity_List[1], "1", "2", "3")
     option_2a = OptionMenu(frame_6, Size_List[2], "Small", "Medium", "Large")
@@ -334,22 +349,22 @@ def Step_6_Cust():
 
 
     #OK Buttons
-    button_1 = Button(frame_6, text="OK", command= a())
-    button_2 = Button(frame_6, text="OK", command= a())
-    button_3 = Button(frame_6, text="OK", command= a())
-    button_4 = Button(frame_6, text="OK", command= a())
-    button_5 = Button(frame_7, text="OK", command= a())
-    button_6 = Button(frame_7, text="OK", command= a())
-    button_7 = Button(frame_7, text="OK", command= a())
-    button_8 = Button(frame_7, text="OK", command= a())
-    button_9 = Button(frame_8, text="OK", command= a())
-    button_10 = Button(frame_8, text="OK", command= a())
-    button_11 = Button(frame_8, text="OK", command= a())
-    button_12 = Button(frame_8, text="OK", command= a())
-    button_13 = Button(frame_9, text="OK", command= a())
-    button_14 = Button(frame_9, text="OK", command= a())
-    button_15 = Button(frame_9, text="OK", command= a())
-    button_16 = Button(frame_9, text="OK", command= a())
+    button_1 = Button(frame_6, text="OK", command= lambda: DropDown_Input(1))
+    button_2 = Button(frame_6, text="OK", command= lambda: DropDown_Input(2))
+    button_3 = Button(frame_6, text="OK", command= lambda: DropDown_Input(3))
+    button_4 = Button(frame_6, text="OK", command= lambda: DropDown_Input(4))
+    button_5 = Button(frame_7, text="OK", command= lambda: DropDown_Input(5))
+    button_6 = Button(frame_7, text="OK", command= lambda: DropDown_Input(6))
+    button_7 = Button(frame_7, text="OK", command= lambda: DropDown_Input(7))
+    button_8 = Button(frame_7, text="OK", command= lambda: DropDown_Input(8))
+    button_9 = Button(frame_8, text="OK", command= lambda: DropDown_Input(9))
+    button_10 = Button(frame_8, text="OK", command= lambda: DropDown_Input(10))
+    button_11 = Button(frame_8, text="OK", command= lambda: DropDown_Input(11))
+    button_12 = Button(frame_8, text="OK", command= lambda: DropDown_Input(12))
+    button_13 = Button(frame_9, text="OK", command= lambda: DropDown_Input(13))
+    button_14 = Button(frame_9, text="OK", command= lambda: DropDown_Input(14))
+    button_15 = Button(frame_9, text="OK", command= lambda: DropDown_Input(15))
+    button_16 = Button(frame_9, text="OK", command= lambda: DropDown_Input(16))
 
 
     #Veg_Pizzas-Pack
@@ -460,7 +475,6 @@ def name_retrival(id_):
     name = ""
     id = id_
 
-    print(name)
     c.execute("SELECT customer_name FROM customer_all WHERE customer_id = ?", (id,))
     name = c.fetchone()
     Step_5_Cust(name)
