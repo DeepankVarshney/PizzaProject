@@ -1,11 +1,26 @@
 import sqlite3                  #Database
-import tkinter.ttk as ttk       #Seperator Line
 import PIL.Image as img         #PIL
 import PIL.ImageTk as imgtk     #PIL
+import datetime                 #Date&Time
+import json                     #JSON
 from tkinter import *           #GUI
+from tkinter import ttk
+
 
 #RootWindow
 root = Tk()
+
+#Globals
+
+SignIn_entry_password = ''
+SignUp_entry_phone = 0
+SignUp_entry_name = ''
+SignUp_entry_email = ''
+SignUp_entry_password = ''
+SignUp_entry_repassword = ''
+customerID = 0
+customerName = ''
+Order_Total = 0
 
 
 #Frame Globals
@@ -27,18 +42,30 @@ frame_15 = Frame(root)
 frame_16 = Frame(root)
 frame_17 = Frame(root)
 
+#List Globals
+Size_List = []
+Quantity_List = []
 
 #Dictionary Globals
 Dict_1 = {}
 Dict_2 = {}
+Dict_Name = {1:1, 2:2, 3:3, 4:4, 5:5, 6:6, 7:7, 8:8, 9:9,
+             10:10, 11:11, 12:12, 13:13, 14:14, 15:15, 16:16}
+Dict_smallPrice = {1:110, 2:125, 3:100, 4:135, 5:150, 6:170, 7:165, 8:190,
+                   9:25, 10:75, 11:95, 12:135, 13:40, 14:55, 15:75, 16:110}
 
+Dict_mediumPrice = {1:210, 2:235, 3:215, 4:270, 5:300, 6:345, 7:320, 8:365,
+                   9:40, 10:95, 11:110, 12:155, 13:50, 14:70, 15:125, 16:205}
+
+Dict_largePrice = {1:305, 2:315, 3:280, 4:385, 5:450, 6:480, 7:535, 8:595,
+                   9:65, 10:105, 11:140, 12:170, 13:65, 14:135, 15:195, 16:285}
 
 #Database Connetion
 conn = sqlite3.connect('pizza.db')
 c = conn.cursor()
 
 
-#
+
 # cost = 0.00
 #
 # base = {'personal': 50, 'regular': 150, 'large': 275}
@@ -58,49 +85,90 @@ def a():
 
 
 #Input for SignUp
-def Input_1():
+def Input_SignUp():
 
-    global SignUp_entry_1
-    global SignUp_entry_2
+    global SignUp_entry_phone, SignUp_entry_name, SignUp_entry_email, SignUp_entry_password, SignUp_entry_repassword
 
-    e1 = SignUp_entry_1.get()
-    e2 = SignUp_entry_2.get()
+    e1 = SignUp_entry_phone.get()
+    e2 = SignUp_entry_name.get()
+    e3 = SignUp_entry_email.get()
+    e4 = SignUp_entry_password.get()
+    e5 = SignUp_entry_repassword.get()
 
-    data_entry(e1, e2)
+    name = Custdata_entry(e1, e2, e3, e4)
+    Step_SignIn_Cust()
 
 #Input for SignIn
-def Input_2():
+def Input_SignIn():
 
-    global SignIn_entry_1
+    global SignIn_entry_phone, SignIn_entry_password, customerID
 
-    e1 = SignIn_entry_1.get()
+    e1 = SignIn_entry_phone.get()
+    e2 = SignIn_entry_password.get()
 
-    name_retrival(e1)
-
+    name = Custdata_retrival(e1)
+    Step_Welcome_Cust(name)
 
 #DropDown-Input
-def DropDown_Input(item):
+def DropDown_Input(item_no):
 
     global Dict_1, Dict_2, Size_List, Quantity_List
 
-    a = Size_List[item].get()
-    b = Quantity_List[item].get()
+    if item_no != 0:
 
-    Dict_1[a] = item
-    Dict_2[b] = item
+        a = Size_List[item_no].get()
+        b = Quantity_List[item_no].get()
 
-    print(Dict_1)
-    print(Dict_2)
+        Dict_1[item_no] = a
+        Dict_2[item_no] = b
+
+        print(Dict_1)
+        print(Dict_2)
+
+    #The Done Button
+    else:
+        Calc_Price(Dict_1, Dict_2)
+
+
+#Price Calculation
+def Calc_Price(Dict_1, Dict_2):
+
+    global Dict_smallPrice, Dict_mediumPrice, Dict_largePrice
+
+    order_list = []
+    amount_list = []
+
+    for i in range(1, 17):
+        if i in Dict_1:
+            order_list.append([i, Dict_1[i], int(Dict_2[i])])
+            print(Dict_1[i], Dict_2[i])
+    print(order_list)
+
+    for i in order_list:
+        if i[1] == 'Small':
+            a = Dict_smallPrice[i[0]] * i[2]
+            amount_list.append(int(a))
+
+        elif i[1] == 'Medium':
+            a = Dict_mediumPrice[i[0]] * i[2]
+            amount_list.append(int(a))
+
+        else:
+            a = Dict_mediumPrice[i[0]] * i[2]
+            amount_list.append(int(a))
+
+    print(amount_list)
+    Step_Bill_Cust(order_list, amount_list)
 
 
 #The Home Frame
-def Step_1_Cust():
+def Step_Home():
 
     global root, frame_1
     root.geometry("1500x750+10+10")
 
     label_1 = Label(frame_1, text = "Are you a Customer or an Employee?", fg = "Black")
-    button_1 = Button(frame_1, text = "Customer", bg = "gainsboro", fg = "Black", command = Step_2_Cust )
+    button_1 = Button(frame_1, text = "Customer", bg = "gainsboro", fg = "Black", command = Step_Choice_Cust )
     button_2 = Button(frame_1, text = "Employee", bg = "gainsboro", fg = "Black", command = a )
 
     frame_1.pack()
@@ -111,14 +179,14 @@ def Step_1_Cust():
 
 
 #User Choice, New or Existing
-def Step_2_Cust():
+def Step_Choice_Cust():
     global root, frame_1, frame_2
 
     frame_1.destroy()
 
     label_1 = Label(frame_2, text = "Are you an Existing Customer or a New One?")
-    button_1 = Button(frame_2, text = "Existing User", bg = "gainsboro", fg = "Black", command = Step_3_Cust )
-    button_2 = Button(frame_2, text = "New User", bg = "gainsboro", fg = "Black", command = Step_4_Cust )
+    button_1 = Button(frame_2, text = "Existing User", bg = "gainsboro", fg = "Black", command = Step_SignIn_Cust )
+    button_2 = Button(frame_2, text = "New User", bg = "gainsboro", fg = "Black", command = Step_SignUp_Cust )
 
     frame_2.pack()
     label_1.pack(fill = X)
@@ -127,45 +195,69 @@ def Step_2_Cust():
 
 
 #User SignIn
-def Step_3_Cust():
-    global root, frame_2, frame_3, SignIn_entry_1
+def Step_SignIn_Cust():
+    global root, frame_2, frame_3, SignIn_entry_phone, SignIn_entry_password
 
     frame_2.destroy()
+    frame_4.destroy()
 
-    label_1 = Label(frame_3, text = "Enter your ID")
-    SignIn_entry_1 = Entry(frame_3)
-    print(SignIn_entry_1)
-    button_1 = Button(frame_3, text = "Submit", command = Input_2)
+    label_1 = Label(frame_3, text = "Phone No : ")
+    label_2 = Label(frame_3, text = "Password : ")
+    label_header = Label(frame_3, text = "Please enter your Login Details")
+    SignIn_entry_phone = Entry(frame_3)
+    SignIn_entry_password = Entry(frame_3)
+    button_1 = Button(frame_3, text = "Submit", command = Input_SignIn)
 
     frame_3.pack()
-    label_1.grid(row = 0, sticky = E)
-    SignIn_entry_1.grid(row = 0, column = 1)
+    label_header.grid(row = 0, columnspan = 2)
+    label_1.grid(row = 1, sticky = E)
+    label_2.grid(row = 2, sticky = E)
+    SignIn_entry_phone.grid(row = 1, column = 1)
+    SignIn_entry_password.grid(row = 2, column = 1)
     button_1.grid(columnspan = 2)
 
 
 #User SignUp
-def Step_4_Cust():
+def Step_SignUp_Cust():
 
-    global root, frame_2, frame_4, SignUp_entry_1, SignUp_entry_2
+    global root, frame_2, frame_4, SignUp_entry_phone, SignUp_entry_name, SignUp_entry_email, SignUp_entry_password, SignUp_entry_repassword
 
     frame_2.destroy()
 
-    label_1 = Label(frame_4, text = "ID")
-    label_2 = Label(frame_4, text = "Name")
-    SignUp_entry_1 = Entry(frame_4)
-    SignUp_entry_2 = Entry(frame_4)
-    button_1 = Button(frame_4, text = "Submit", command = Input_1)
+    label_1 = Label(frame_4, text = "Enter your Phone No : ")
+    label_2 = Label(frame_4, text = "Enter your Name : ")
+    label_3 = Label(frame_4, text = "Enter your Email : ")
+    label_4 = Label(frame_4, text = "Set a Password : ")
+    label_5 = Label(frame_4, text = "Retype Password")
+    label_header = Label(frame_4, text = "Enter your Details : ")
+
+    SignUp_entry_phone = Entry(frame_4)
+    SignUp_entry_name = Entry(frame_4)
+    SignUp_entry_email = Entry(frame_4)
+    SignUp_entry_password = Entry(frame_4)
+    SignUp_entry_repassword = Entry(frame_4)
+
+    button_1 = Button(frame_4, text = "Submit", command = Input_SignUp)
 
     frame_4.pack()
-    label_1.grid(row = 0, sticky = E)
-    label_2.grid(row = 1, sticky = W)
-    SignUp_entry_1.grid(row = 0, column = 1)
-    SignUp_entry_2.grid(row = 1, column = 1)
+    label_header.grid(row = 0, columnspan = 2, sticky = WE)
+    label_1.grid(row = 1, sticky = E)
+    label_2.grid(row = 2, sticky = E)
+    label_3.grid(row = 3, sticky = E)
+    label_4.grid(row = 4, sticky = E)
+    label_5.grid(row = 5, sticky = E)
+
+    SignUp_entry_phone.grid(row = 1, column = 1)
+    SignUp_entry_name.grid(row = 2, column = 1)
+    SignUp_entry_email.grid(row = 3, column = 1)
+    SignUp_entry_password.grid(row = 4, column = 1)
+    SignUp_entry_repassword.grid(row = 5, column = 1)
+
     button_1.grid(columnspan = 2)
 
 
 #User Welcome
-def Step_5_Cust(name_):
+def Step_Welcome_Cust(name):
 
     global root, frame_3, frame_4, frame_5
 
@@ -173,11 +265,11 @@ def Step_5_Cust(name_):
     frame_4.destroy()
 
     var_1 = StringVar()
-    var_1.set("Welcome " + str(name_[0]) )
+    var_1.set("Welcome " + str(name[0]))
 
     label_1 = Label (frame_5, textvariable = var_1,)
-    button_1 = Button(frame_5, text = "New Order", bg = "gainsboro", fg = "Black", command = Step_6_Cust)
-    button_2 = Button(frame_5, text = "Order History", bg = "gainsboro", fg = "Black", command = a)
+    button_1 = Button(frame_5, text = "New Order", bg = "gainsboro", fg = "Black", command = Step_Menu_Cust)
+    button_2 = Button(frame_5, text = "Order History", bg = "gainsboro", fg = "Black", command = Step_OrderHistory_Cust)
 
     frame_5.pack()
     label_1.pack(fill = X)
@@ -186,9 +278,9 @@ def Step_5_Cust(name_):
 
 
 #Predefined Menu
-def Step_6_Cust():
+def Step_Menu_Cust():
 
-    global root, frame_5, frame_6, frame_7, frame_8, frame_9, Size, Quantity, Size_List, Quantity_List
+    global root, frame_5, frame_6, frame_7, frame_8, frame_9, Size, Quantity, Size_List, Quantity_List, Dict_Name
 
     frame_5.destroy()
 
@@ -248,49 +340,66 @@ def Step_6_Cust():
     a_16 = a_16.resize((100, 100), img.ANTIALIAS)
     b_16 = imgtk.PhotoImage(a_16)
 
+
     #Veg_Pizzas-Image_Ready
-    label_h1 = Label(frame_6, text = "Veg Pizzas")
+    label_heading1 = Label(frame_6, text = "Veg Pizzas")
     label_1 = Label(frame_6, image = b_1)
     label_1.image = b_1
+    label_name1 = Label(frame_6, text = str(Dict_Name[1]))
     label_2 = Label(frame_6, image = b_2)
     label_2.image = b_2
+    label_name2 = Label(frame_6, text = str(Dict_Name[2]))
     label_3 = Label(frame_6, image = b_3)
     label_3.image = b_3
+    label_name3 = Label(frame_6, text = str(Dict_Name[3]))
     label_4 = Label(frame_6, image = b_4)
     label_4.image = b_4
+    label_name4 = Label(frame_6, text = str(Dict_Name[4]))
 
     #NonVeg_Pizzas-Image_Ready
-    label_h2 = Label(frame_7, text = "Non - Veg Pizzas")
+    label_heading2 = Label(frame_7, text = "Non - Veg Pizzas")
     label_5 = Label(frame_7, image = b_5)
     label_5.image = b_5
+    label_name5 = Label(frame_7, text = str(Dict_Name[5]))
     label_6 = Label(frame_7, image = b_6)
     label_6.image = b_6
+    label_name6 = Label(frame_7, text = str(Dict_Name[6]))
     label_7 = Label(frame_7, image = b_7)
     label_7.image = b_7
+    label_name7 = Label(frame_7, text = str(Dict_Name[7]))
     label_8 = Label(frame_7, image = b_8)
     label_8.image = b_8
+    label_name8 = Label(frame_7, text = str(Dict_Name[8]))
 
     #Sides-Image_Ready
-    label_h3 = Label(frame_8, text = "Sides")
+    label_heading3 = Label(frame_8, text = "Sides")
     label_9 = Label(frame_8, image = b_9)
     label_9.image = b_9
+    label_name9 = Label(frame_8, text = str(Dict_Name[9]))
     label_10 = Label(frame_8, image = b_10)
     label_10.image = b_10
+    label_name10 = Label(frame_8, text = str(Dict_Name[10]))
     label_11 = Label(frame_8, image = b_11)
     label_11.image = b_11
+    label_name11 = Label(frame_8, text = str(Dict_Name[11]))
     label_12 = Label(frame_8, image = b_12)
     label_12.image = b_12
+    label_name12 = Label(frame_8, text = str(Dict_Name[12]))
 
     #Beverages-Image_Ready
-    label_h4 = Label(frame_9, text = "Beverages")
+    label_heading4 = Label(frame_9, text = "Beverages")
     label_13 = Label(frame_9, image = b_13)
     label_13.image = b_13
+    label_name13 = Label(frame_9, text = str(Dict_Name[13]))
     label_14 = Label(frame_9, image = b_14)
     label_14.image = b_14
+    label_name14 = Label(frame_9, text = str(Dict_Name[14]))
     label_15 = Label(frame_9, image = b_15)
     label_15.image = b_15
+    label_name15 = Label(frame_9, text = str(Dict_Name[15]))
     label_16 = Label(frame_9, image = b_16)
     label_16.image = b_16
+    label_name16 = Label(frame_9, text = str(Dict_Name[16]))
 
     #Spacing
     label_100 = Label(frame_6, text = " ")
@@ -300,9 +409,6 @@ def Step_6_Cust():
 
 
     #Generating Multiple StringVars
-    Size_List = []
-    Quantity_List = []
-
     for i in range(0, 17):
 
         Size = StringVar(root)
@@ -365,125 +471,339 @@ def Step_6_Cust():
     button_14 = Button(frame_9, text="OK", command= lambda: DropDown_Input(14))
     button_15 = Button(frame_9, text="OK", command= lambda: DropDown_Input(15))
     button_16 = Button(frame_9, text="OK", command= lambda: DropDown_Input(16))
+    button_17 = Button(frame_9, text="Done!!", command= lambda: DropDown_Input(0))
 
 
     #Veg_Pizzas-Pack
     frame_6.pack()
-    label_h1.grid(row = 0, columnspan = 7, sticky = N)
+    label_heading1.grid(row = 0, columnspan = 7, sticky = N)
     label_1.grid(row = 1, rowspan = 3, column = 0, padx = 20, pady = 20)
+    label_name1.grid(row = 3, column = 0, sticky = S)
     option_1a.grid(row = 1, column = 1, sticky = S)
     option_1b.grid(row = 2, column = 1, sticky = N)
-    button_1.grid(row = 3, column = 1)
+    button_1.grid(row = 3, column = 1, sticky = S)
     label_2.grid(row = 1, rowspan = 3, column = 2, padx = 20, pady = 20)
+    label_name2.grid(row = 3, column = 2, sticky = S)
     option_2a.grid(row = 1, column = 3, sticky = S)
     option_2b.grid(row = 2, column = 3, sticky = N)
     button_2.grid(row = 3, column = 3)
     label_3.grid(row = 1, rowspan = 3, column = 4, padx = 20, pady = 20)
+    label_name3.grid(row = 3, column = 4, sticky = S)
     option_3a.grid(row = 1, column = 5, sticky = S)
     option_3b.grid(row = 2, column = 5, sticky = N)
     button_3.grid(row = 3, column = 5)
     label_4.grid(row = 1, rowspan = 3, column = 6, padx = 20, pady = 20)
+    label_name4.grid(row = 3, column = 6, sticky = S)
     option_4a.grid(row = 1, column = 7, sticky = S)
     option_4b.grid(row = 2, column = 7, sticky = N)
     button_4.grid(row = 3, column = 7)
     label_100.grid(row = 4, columnspan = 7)
-    ttk.Separator(root).place(x = 0, y = 170, relwidth=2)
+    ttk.Separator(frame_6).place(x = 0, y = 170, relwidth=2)
 
     #NonVeg_Pizzas-Pack
     frame_7.pack()
-    label_h2.grid(row = 0, columnspan = 7, sticky = N)
+    label_heading2.grid(row = 0, columnspan = 7, sticky = N)
     label_5.grid(row = 1, rowspan = 3, column = 0, padx = 20, pady = 20)
+    label_name5.grid(row = 3, column = 0, sticky = S)
     option_5a.grid(row = 1, column = 1, sticky = S)
     option_5b.grid(row = 2, column = 1, sticky = N)
     button_5.grid(row = 3, column = 1)
     label_6.grid(row = 1, rowspan = 3, column = 2, padx = 20, pady = 20)
+    label_name6.grid(row = 3, column = 2, sticky = S)
     option_6a.grid(row = 1, column = 3, sticky = S)
     option_6b.grid(row = 2, column = 3, sticky = N)
     button_6.grid(row = 3, column = 3)
     label_7.grid(row = 1, rowspan = 3, column = 4, padx = 20, pady = 20)
+    label_name7.grid(row = 3, column = 4, sticky = S)
     option_7a.grid(row = 1, column = 5, sticky = S)
     option_7b.grid(row = 2, column = 5, sticky = N)
     button_7.grid(row = 3, column = 5)
     label_8.grid(row = 1, rowspan = 3, column = 6, padx = 20, pady = 20)
+    label_name8.grid(row = 3, column = 6, sticky = S)
     option_8a.grid(row = 1, column = 7, sticky = S)
     option_8b.grid(row = 2, column = 7, sticky = N)
     button_8.grid(row = 3, column = 7)
     label_200.grid(row = 4, columnspan = 7)
-    ttk.Separator(root).place(x = 0, y = 360, relwidth=2)
+    ttk.Separator(frame_7).place(x = 0, y = 360, relwidth=2)
 
     #Sides-Pack
     frame_8.pack()
-    label_h3.grid(row = 0, columnspan = 7, sticky = N)
+    label_heading3.grid(row = 0, columnspan = 7, sticky = N)
     label_9.grid(row = 1, rowspan = 3, column = 0, padx = 20, pady = 20)
+    label_name9.grid(row = 3, column = 0, sticky = S)
     option_9a.grid(row = 1, column = 1, sticky = S)
     option_9b.grid(row = 2, column = 1, sticky = N)
     button_9.grid(row = 3, column = 1)
     label_10.grid(row = 1, rowspan = 3, column = 2, padx = 20, pady = 20)
+    label_name10.grid(row = 3, column = 2, sticky = S)
     option_10a.grid(row = 1, column = 3, sticky = S)
     option_10b.grid(row = 2, column = 3, sticky = N)
     button_10.grid(row = 3, column = 3)
     label_11.grid(row = 1, rowspan = 3, column = 4, padx = 20, pady = 20)
+    label_name11.grid(row = 3, column = 4, sticky = S)
     option_11a.grid(row = 1, column = 5, sticky = S)
     option_11b.grid(row = 2, column = 5, sticky = N)
     button_11.grid(row = 3, column = 5)
     label_12.grid(row = 1, rowspan = 3, column = 6, padx = 20, pady = 20)
+    label_name12.grid(row = 3, column = 6, sticky = S)
     option_12a.grid(row = 1, column = 7, sticky = S)
     option_12b.grid(row = 2, column = 7, sticky = N)
     button_12.grid(row = 3, column = 7)
     label_300.grid(row = 4, columnspan = 7)
-    ttk.Separator(root).place(x = 0, y = 540, relwidth=2)
+    ttk.Separator(frame_8).place(x = 0, y = 540, relwidth=2)
 
     #Beverages-Pack
     frame_9.pack()
-    label_h4.grid(row = 0, columnspan = 7, sticky = N)
+    label_heading4.grid(row = 0, columnspan = 7, sticky = N)
     label_13.grid(row = 1, rowspan = 3, column = 0, padx = 20, pady = 20)
+    label_name13.grid(row = 3, column = 0, sticky = S)
     option_13a.grid(row = 1, column = 1, sticky = S)
     option_13b.grid(row = 2, column = 1, sticky = N)
     button_13.grid(row = 3, column = 1)
     label_14.grid(row = 1, rowspan = 3, column = 2, padx = 20, pady = 20)
+    label_name14.grid(row = 3, column = 2, sticky = S)
     option_14a.grid(row = 1, column = 3, sticky = S)
     option_14b.grid(row = 2, column = 3, sticky = N)
     button_14.grid(row = 3, column = 3)
     label_15.grid(row = 1, rowspan = 3, column = 4, padx = 20, pady = 20)
+    label_name15.grid(row = 3, column = 4, sticky = S)
     option_15a.grid(row = 1, column = 5, sticky = S)
     option_15b.grid(row = 2, column = 5, sticky = N)
     button_15.grid(row = 3, column = 5)
     label_16.grid(row = 1, rowspan = 3, column = 6, padx = 20, pady = 20)
+    label_name16.grid(row = 3, column = 6, sticky = S)
     option_16a.grid(row = 1, column = 7, sticky = S)
     option_16b.grid(row = 2, column = 7, sticky = N)
     button_16.grid(row = 3, column = 7)
-    label_200.grid(row = 4, columnspan = 7)
-    ttk.Separator(root).place(x = 0, y = 730, relwidth=2)
+    button_17.grid(row = 4, column = 7)
+    label_200.grid(row = 5, columnspan = 7)
+    ttk.Separator(frame_9).place(x = 0, y = 730, relwidth=2)
+
+#Order-History Display
+def Step_OrderHistory_Cust():
+
+    global root, frame_5, frame_10, customerID, Dict_Name, Dict_smallPrice, Dict_mediumPrice, Dict_largePrice
+
+    #Lists
+    Timestamp_List = []
+    Item_List = []
+    Total_List = []
+    OrderItems_List = []
+    OrderTimestamps_List = []
+    OrderTotals_List = []
+
+    #Label-Lists
+    Label_Timestamps_List = []
+    Label_Items_List = []
+    Label_Totals_List = []
+
+    Count_List = []
+
+    k = 0
+    x = 2
+    m = 2
+    n = 2
+    y = 0
+    z = 0
+    q = 0
+
+    c.execute('''SELECT orderSummary, orderTotal, orderDateTime
+                 FROM Orders
+                 WHERE custID = ?''', (customerID,))
+    a = c.fetchall()
+
+    for i in a:
+        OrderItems = eval(a[k][0])
+        OrderItems_List.append(OrderItems)
+        OrderTotals = a[k][1]
+        OrderTotals_List.append(OrderTotals)
+        OrderTimestamps = a[k][2]
+        OrderTimestamps_List.append(OrderTimestamps)
+        k += 1
+
+    frame_5.destroy()
+
+    label_header = Label(frame_10, text = "Here are your most recent orders : ")
+    label_tableheader = Label(frame_10, text = "Date                                Order-Items                     Order-Total")
+
+    #Generating Multiple StringVars
+    for i in OrderItems_List:
+        p = 0
+        for j in i:
+            if j[1] == 'Small':
+                Item = StringVar()
+                Item.set(str(Dict_Name[j[0]]) + " (" + j[1] + ") X " + str(j[2]) + " = " + str(Dict_smallPrice[j[0]] * j[2]))
+            elif j[1] == 'Medium':
+                Item = StringVar()
+                Item.set(str(Dict_Name[j[0]]) + " (" + j[1] + ") X " + str(j[2]) + " = " + str(Dict_mediumPrice[j[0]] * j[2]))
+            else:
+                Item = StringVar()
+                Item.set(str(Dict_Name[j[0]]) + " (" + j[1] + ") X " + str(j[2]) + " = " + str(Dict_largePrice[j[0]] * j[2]))
+            Item_List.append(Item)
+            p += 1
+        Count_List.append(p)
+    print(Count_List)
+    for i in OrderTimestamps_List:
+        Timestamp = IntVar()
+        Timestamp.set(i)
+        Timestamp_List.append(Timestamp)
+
+    for i in OrderTotals_List:
+        Total = IntVar()
+        Total.set(i)
+        Total_List.append(Total)
+
+    #Labels
+    for i in Item_List:
+        label_Item = Label(frame_10, textvariable = i,)
+        Label_Items_List.append(label_Item)
+
+    for i in Timestamp_List:
+        label_Timestamp = Label(frame_10, textvariable = i,)
+        Label_Timestamps_List.append(label_Timestamp)
+
+    for i in Total_List:
+        label_Total = Label(frame_10, textvariable = i,)
+        Label_Totals_List.append(label_Total)
 
 
-def create_table():
-    c.execute("CREATE TABLE IF NOT EXISTS customer_all(customer_id INTEGER, customer_name TEXT, customer_order TEXT, price REAL, total_price REAL, order_datetime TEXT)")
+    #Packing
+    frame_10.pack()
+    label_header.grid(row = 0, columnspan = 3)
+    label_tableheader.grid(row = 1, columnspan = 3)
 
-def data_entry(id_, name_ ):
 
-    id = id_
-    name = name_
+    for i in Label_Timestamps_List:
+        i.grid(row = m, rowspan = Count_List[y], column = 0, sticky = W)
+        m = m + Count_List[y]
+        y += 1
 
-    c.execute("INSERT INTO customer_all(customer_id, customer_name) VALUES(?, ?)", (id, name))
+    for i in Count_List:
+        for j in range(0, i):
+            Label_Items_List[q].grid(row = x, column = 1)
+            q += 1
+            x += 1
+
+    for i in Label_Totals_List:
+        i.grid(row = n, rowspan = Count_List[z], column = 2, sticky = E)
+        n = n + Count_List[z]
+        z +=1
+
+#Bill Display
+def Step_Bill_Cust(order_list, amount_list):
+
+    global root, frame_6, frame_7, frame_8, frame_9, frame_11, Order_Total
+
+    k = 0
+    Bill_List = []
+    Label_List = []
+
+    frame_6.destroy()
+    frame_7.destroy()
+    frame_8.destroy()
+    frame_9.destroy()
+
+    for i in amount_list:
+        Order_Total += i
+
+    Total = StringVar()
+    Total.set("Your total payable amount is: " + str(Order_Total))
+
+    for i in order_list:
+        Bill = StringVar()
+        Bill.set("Item No " + str(i[0]) + " (" + i[1] + " ) X " + str(i[2]) + " = " + str(amount_list[k]))
+        Bill_List.append(Bill)
+        k += 1
+
+    #Labels
+    label_1 = Label(frame_11, text = "Total Bill")
+
+    for i in Bill_List:
+        label_Bill = Label(frame_11, textvariable = i,)
+        Label_List.append(label_Bill)
+
+    label_Total = Label(frame_11, textvariable = Total)
+
+    #Packing
+    frame_11.pack()
+    label_1.pack()
+
+    for i in Label_List:
+        i.pack()
+
+    label_Total.pack()
+
+    Orderdata_entry(order_list, amount_list)
+
+
+#Create-Table
+def Create_Tables():
+
+    c.execute('''CREATE TABLE IF NOT EXISTS Customers(custID INTEGER PRIMARY KEY,
+                                                      custName TEXT,
+                                                      custPassword	TEXT,
+	                                                  custEmail	TEXT,
+                                                      custPhone INTEGER)''')
+
+    c.execute('''CREATE TABLE IF NOT EXISTS Orders(orderNo INTEGER PRIMARY KEY,
+                                                   custID INTEGER,
+                                                   orderSummary TEXT,
+                                                   orderTotal REAL,
+                                                   orderDateTime TEXT,
+                                                   FOREIGN KEY(custID) REFERENCES Customers(custID))''')
+
+
+def Custdata_entry(phone, name, email, password):
+
+    c.execute('''SELECT custID
+                 FROM Customers
+                 WHERE custID = (SELECT MAX(custID) FROM Customers)''')
+    a = c.fetchone()
+    customerID = int(a[0] + 1)
+
+    c.execute('''INSERT INTO Customers(custID, custPhone, custName, custEmail, custPassword)
+                 VALUES(?, ?, ?, ?, ?)''', (customerID, phone, name, email, password))
+
     conn.commit()
 
-    name_retrival(id)
 
+def Custdata_retrival(phone):
 
-def name_retrival(id_):
+    global customerID
 
-    name = ""
-    id = id_
-
-    c.execute("SELECT customer_name FROM customer_all WHERE customer_id = ?", (id,))
+    c.execute('''SELECT custName
+                 FROM Customers
+                 WHERE custPhone = ?''', (phone,))
     name = c.fetchone()
-    Step_5_Cust(name)
+
+    c.execute('''SELECT custID
+                 FROM Customers
+                 WHERE custPhone = ?''', (phone,))
+    b = c.fetchone()
+    customerID = b[0]
+
+    return name
 
 
+def Orderdata_entry(order_list, amount_list):
 
-def Cust_Input():
+    global Order_Total, customerID
 
-    create_table()
-    data_entry(id_, pass_)
+    c.execute('''SELECT orderNo
+                 FROM Orders
+                 WHERE orderNo = (SELECT MAX(orderNo) FROM Orders)''')
+    a = c.fetchone()
+    order_no = int(a[0] + 1)
 
-Step_1_Cust()
+    order_summ = json.dumps(order_list)
+    t = datetime.datetime.now()
+    timestamp = t.strftime('%d-%m-%Y %H:%M:%S')
+    print(order_no, customerID, order_list, Order_Total, timestamp)
+    c.execute('''INSERT INTO Orders(orderNo, custID, orderSummary,
+                                    orderTotal, orderDateTime)
+                 VALUES(?,?,?,?,?)''', (order_no, customerID, order_summ, Order_Total, timestamp))
+
+    conn.commit()
+
+
+Step_Home()
