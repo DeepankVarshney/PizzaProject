@@ -4,6 +4,8 @@ import PIL.ImageTk as imgtk     #PIL
 import datetime                 #Date&Time
 import json                     #JSON
 import sys                      #System
+import re                       #Regex
+import smtplib                  #SMTP
 from tkinter import *           #GUI
 from tkinter import ttk         #TkinterToolkit
 from tkinter import messagebox  #MessageBox
@@ -86,6 +88,58 @@ def a():
     print("Work In Progress.")
 
 
+#Password Recovery
+def Password_Recovery(info):
+
+    email = info.get()
+    flag = Email_Check(email)
+
+    if flag == 0:
+        Display_MessageBox("Email_missing")
+
+    elif flag == 1:
+        ans = Display_MessageBox("Email_notfound")
+
+        if ans == 'yes':
+            Step_SignUp_Cust()
+        else:
+            pass
+
+    else:
+        password = Password_retrival(email)
+
+        gmail_user = 'pizzapalace1339@gmail.com'
+        gmail_password = 'Pizza@Pizza'
+
+        sent_from = gmail_user
+        to = email
+        subject = "Password Reset for Pizza Palace"
+        body = "The password for your account is: " + str(password)
+
+        email_text = """\
+        From: %s
+        To: %s
+        Subject: %s
+
+        %s
+        """ % (sent_from, to, subject, body)
+
+        try:
+            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server.ehlo()
+            server.starttls()
+            server.login(gmail_user, gmail_password)
+            server.sendmail(sent_from, to, email_text)
+            server.close()
+
+        except:
+
+            Display_MessageBox("Internet_issue")
+
+
+        Display_MessageBox("Email_sent")
+        Step_SignIn_Cust()
+
 #Input for SignUp
 def Input_SignUp():
 
@@ -96,23 +150,47 @@ def Input_SignUp():
     e3 = SignUp_entry_email.get()
     e4 = SignUp_entry_password.get()
     e5 = SignUp_entry_repassword.get()
+    digit = e1.isdigit()
+    #alpha = e2.isalpha()
+    regex = re.compile('[@_!#$%^&*()<>?/\|}{~:]')
 
-    print(e1, e2, e3, e4, e5)
     if e1 == '' or e2 == '' or e3 == '' or e4 == '' or e5 == '':
         Display_MessageBox("SignUp_missing")
+
+    elif digit != True or len(e1) != 10:
+        Display_MessageBox("Phone_error")
+
+    #elif regex.search(e2) != 0: #or alpha != True:
+        Display_MessageBox("Name_invalid")
+
+    elif e4 != e5:
+        Display_MessageBox("Password_mismatch")
 
     else:
         flag_id, name = Phone_Email_check(e1, e3)
 
         if flag_id == 0:
-            Display_MessageBox("Phone_exists", name[0])
+            ans = Display_MessageBox("Phone_exists", name[0])
+            if ans == 'yes':
+                Display_MessageBox("Redirecting")
+                Step_SignIn_Cust()
+
+            else:
+                pass
 
         elif flag_id == 1:
-            Display_MessageBox("Email_exists", name[0])
 
+            ans = Display_MessageBox("Email_exists", name[0])
+            if ans == 'yes':
+                Display_MessageBox("Redirecting")
+                Step_SignIn_Cust()
 
-        name = Custdata_entry(e1, e2, e3, e4)
-        Step_SignIn_Cust()
+            else:
+                pass
+
+        else:
+            name = Custdata_entry(e1, e2, e3, e4)
+            Step_SignIn_Cust()
 
 
 #Input for SignIn
@@ -123,17 +201,21 @@ def Input_SignIn():
     e1 = SignIn_entry_phone.get()
     e2 = SignIn_entry_password.get()
 
-    flag_id = ID_check(e1)
+    flag_id = Phone_check(e1)
+    digit = e1.isdigit()
 
     if flag_id == 0:
 
-        Display_MessageBox("ID_missing")
+        Display_MessageBox("Phone_missing")
+
+    elif digit != True or len(e1) != 10:
+        Display_MessageBox("Phone_error")
 
     else:
 
         if flag_id == 1:
 
-            ans = Display_MessageBox("ID_wrong")
+            ans = Display_MessageBox("Phone_wrong")
             if ans == 'yes':
                 Step_SignUp_Cust()
 
@@ -211,21 +293,49 @@ def Display_MessageBox(info, name = ''):
     elif info == 'Password_wrong':
         messagebox.showinfo("Incorrect Password", "Sorry, the entered password is Wrong")
 
-    elif info == 'ID_missing':
+    elif info == 'Phone_missing':
         messagebox.showinfo("Phone No Missing", "Please enter your Phone No")
 
-    elif info == 'ID_wrong':
+    elif info == 'Phone_wrong':
         ans = messagebox.askquestion("Are you a new user", "The entered phone no does not match any of our users,\n Would you like to SignUp?")
         return ans
 
     elif info == 'SignUp_missing':
         messagebox.showinfo("Fields Empty", "Please fill all the details")
 
+    elif info == 'Phone_error':
+        messagebox.showinfo("Not a Number", "Phone No can only be a 10-digit number")
+
+    elif info == 'Name_invalid':
+        messagebox.showinfo("Invalid Name", "Name can only contain Alphabets")
+
+    elif info == 'Password_mismatch':
+        messagebox.showinfo("Password Mismatch", "Your entered Password do not match")
+
     elif info == 'Phone_exists':
-        messagebox.askquestion("Phone No Exists", "This Phone No belongs to: " + name + "\nPlease SignIn or use a different Phone No\n Would you like to SignIn?")
+        ans = messagebox.askquestion("Phone No Exists", "This Phone No belongs to: " + name + "\nPlease SignIn or use a different Phone No\n Would you like to SignIn?")
+        return ans
 
     elif info == 'Email_exists':
-        messagebox.askquestion("Email Exists", "This Email belongs to: " + name + "\nPlease SignIn or use a different Email\n Would you like to SignIn?")
+        ans = messagebox.askquestion("Email Exists", "This Email belongs to: " + name + "\nPlease SignIn or use a different Email\n Would you like to SignIn?")
+        return ans
+
+    elif info == 'Redirecting':
+        messagebox.showinfo("Redirecting", "Your are being redirected to SignIn \nPress OK to continue")
+
+    elif info == 'Email_missing':
+        messagebox.showinfo("Email empty", "Please enter an email")
+
+    elif info == 'Email_notfound':
+        ans = messagebox.askquestion("Email not registered", "The email you entered is not registered with us \nWould you like to SignUp")
+        return ans
+
+    elif info == 'Email_sent':
+        messagebox.showinfo("Email sent", "Your Password has been sent to your registered Email address \n You are now being directed to SignIn")
+
+    elif info == 'Internet_issue':
+        messagebox.showinfo("Internet Error", "Please check your internet connection")
+
 
 #The Home Frame
 def Step_Home():
@@ -266,6 +376,9 @@ def Step_SignIn_Cust():
 
     frame_2.destroy()
     frame_4.pack_forget()
+    frame_4.grid_forget()
+    frame_12.pack_forget()
+    frame_12.grid_forget()
 
     label_1 = Label(frame_3, text = "Phone No : ")
     label_2 = Label(frame_3, text = "Password : ")
@@ -273,15 +386,34 @@ def Step_SignIn_Cust():
     SignIn_entry_phone = Entry(frame_3)
     SignIn_entry_password = Entry(frame_3)
     button_1 = Button(frame_3, text = "Submit", command = Input_SignIn)
-
+    button_2 = Button(frame_3, text = "Forgot Password?", command = Step_PasswordRecovery_Cust)
     frame_3.pack()
     label_header.grid(row = 0, columnspan = 2)
     label_1.grid(row = 1, sticky = E)
     label_2.grid(row = 2, sticky = E)
     SignIn_entry_phone.grid(row = 1, column = 1)
     SignIn_entry_password.grid(row = 2, column = 1)
-    button_1.grid(columnspan = 2)
+    button_1.grid(row = 3, column = 0)
+    button_2.grid(row = 3, column = 1)
 
+#User Email for Password Recovery
+def Step_PasswordRecovery_Cust():
+
+    global root, frame_3, frame_12
+
+    frame_3.pack_forget()
+    frame_3.grid_forget()
+
+    label_1 = Label(frame_12, text = "Please enter your email")
+    label_2 = Label(frame_12, text = "Email")
+    Email_entry = Entry(frame_12)
+    button_1 = Button(frame_12, text = "Submit", command = lambda : Password_Recovery(Email_entry))
+
+    frame_12.pack()
+    label_1.grid(row = 0, columnspan = 2, sticky = W+E)
+    label_2.grid(row = 1, column = 0, sticky = E)
+    Email_entry.grid(row = 1, column = 1, sticky = W)
+    button_1.grid(row = 2, columnspan = 2)
 
 #User SignUp
 def Step_SignUp_Cust():
@@ -290,6 +422,7 @@ def Step_SignUp_Cust():
 
     frame_2.destroy()
     frame_3.pack_forget()
+    frame_3.grid_forget()
 
     label_1 = Label(frame_4, text = "Enter your Phone No : ")
     label_2 = Label(frame_4, text = "Enter your Name : ")
@@ -297,6 +430,7 @@ def Step_SignUp_Cust():
     label_4 = Label(frame_4, text = "Set a Password : ")
     label_5 = Label(frame_4, text = "Retype Password")
     label_header = Label(frame_4, text = "Enter your Details : ")
+
 
     SignUp_entry_phone = Entry(frame_4)
     SignUp_entry_name = Entry(frame_4)
@@ -821,7 +955,22 @@ def Create_Tables():
                                                    orderDateTime TEXT,
                                                    FOREIGN KEY(custID) REFERENCES Customers(custID))''')
 
-def ID_check(phone):
+def Email_Check(email):
+
+    if email == '':
+        return 0
+
+    else:
+        c.execute('''SELECT custID
+                     FROM Customers
+                     WHERE custEmail = ?''', (email,))
+        a = c.fetchone()
+        if a == None:
+            return 1
+        else:
+            return 2
+
+def Phone_check(phone):
 
     if phone == '':
         return 0
@@ -874,21 +1023,16 @@ def Phone_Email_check(phone, email):
         return 1, b
 
     else:
-        return 2
+        return 2, None
 
-def Custdata_entry(phone, name, email, password):
 
-    c.execute('''SELECT custID
+def Password_retrival(email):
+
+    c.execute('''SELECT custPassword
                  FROM Customers
-                 WHERE custID = (SELECT MAX(custID) FROM Customers)''')
-    a = c.fetchone()
-    customerID = int(a[0] + 1)
-
-    c.execute('''INSERT INTO Customers(custID, custPhone, custName, custEmail, custPassword)
-                 VALUES(?, ?, ?, ?, ?)''', (customerID, phone, name, email, password))
-
-    conn.commit()
-
+                 WHERE custEmail = ?''', (email,))
+    password = c.fetchone()
+    return password[0]
 
 def Custdata_retrival(phone):
 
@@ -907,6 +1051,19 @@ def Custdata_retrival(phone):
 
     return name
 
+
+def Custdata_entry(phone, name, email, password):
+
+    c.execute('''SELECT custID
+    FROM Customers
+    WHERE custID = (SELECT MAX(custID) FROM Customers)''')
+    a = c.fetchone()
+    customerID = int(a[0] + 1)
+
+    c.execute('''INSERT INTO Customers(custID, custPhone, custName, custEmail, custPassword)
+    VALUES(?, ?, ?, ?, ?)''', (customerID, phone, name, email, password))
+
+    conn.commit()
 
 def Orderdata_entry(order_list, amount_list):
 
