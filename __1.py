@@ -3,8 +3,10 @@ import PIL.Image as img         #PIL
 import PIL.ImageTk as imgtk     #PIL
 import datetime                 #Date&Time
 import json                     #JSON
+import sys                      #System
 from tkinter import *           #GUI
-from tkinter import ttk
+from tkinter import ttk         #TkinterToolkit
+from tkinter import messagebox  #MessageBox
 
 
 #RootWindow
@@ -95,8 +97,23 @@ def Input_SignUp():
     e4 = SignUp_entry_password.get()
     e5 = SignUp_entry_repassword.get()
 
-    name = Custdata_entry(e1, e2, e3, e4)
-    Step_SignIn_Cust()
+    print(e1, e2, e3, e4, e5)
+    if e1 == '' or e2 == '' or e3 == '' or e4 == '' or e5 == '':
+        Display_MessageBox("SignUp_missing")
+
+    else:
+        flag_id, name = Phone_Email_check(e1, e3)
+
+        if flag_id == 0:
+            Display_MessageBox("Phone_exists", name[0])
+
+        elif flag_id == 1:
+            Display_MessageBox("Email_exists", name[0])
+
+
+        name = Custdata_entry(e1, e2, e3, e4)
+        Step_SignIn_Cust()
+
 
 #Input for SignIn
 def Input_SignIn():
@@ -106,8 +123,33 @@ def Input_SignIn():
     e1 = SignIn_entry_phone.get()
     e2 = SignIn_entry_password.get()
 
-    name = Custdata_retrival(e1)
-    Step_Welcome_Cust(name)
+    flag_id = ID_check(e1)
+
+    if flag_id == 0:
+
+        Display_MessageBox("ID_missing")
+
+    else:
+
+        if flag_id == 1:
+
+            ans = Display_MessageBox("ID_wrong")
+            if ans == 'yes':
+                Step_SignUp_Cust()
+
+        else:
+            flag_password = Password_Check(e1, e2)
+
+            if flag_password == 0:
+                Display_MessageBox("Password_missing")
+
+            elif flag_password == 1:
+                Display_MessageBox("Password_wrong")
+
+            else:
+                name = Custdata_retrival(e1)
+                Step_Welcome_Cust(name)
+
 
 #DropDown-Input
 def DropDown_Input(item_no):
@@ -160,6 +202,30 @@ def Calc_Price(Dict_1, Dict_2):
     print(amount_list)
     Step_Bill_Cust(order_list, amount_list)
 
+#Displaying different MessageBoxes
+def Display_MessageBox(info, name = ''):
+
+    if info == 'Password_missing':
+        messagebox.showinfo("Password Missing", "Please enter a Password")
+
+    elif info == 'Password_wrong':
+        messagebox.showinfo("Incorrect Password", "Sorry, the entered password is Wrong")
+
+    elif info == 'ID_missing':
+        messagebox.showinfo("Phone No Missing", "Please enter your Phone No")
+
+    elif info == 'ID_wrong':
+        ans = messagebox.askquestion("Are you a new user", "The entered phone no does not match any of our users,\n Would you like to SignUp?")
+        return ans
+
+    elif info == 'SignUp_missing':
+        messagebox.showinfo("Fields Empty", "Please fill all the details")
+
+    elif info == 'Phone_exists':
+        messagebox.askquestion("Phone No Exists", "This Phone No belongs to: " + name + "\nPlease SignIn or use a different Phone No\n Would you like to SignIn?")
+
+    elif info == 'Email_exists':
+        messagebox.askquestion("Email Exists", "This Email belongs to: " + name + "\nPlease SignIn or use a different Email\n Would you like to SignIn?")
 
 #The Home Frame
 def Step_Home():
@@ -199,7 +265,7 @@ def Step_SignIn_Cust():
     global root, frame_2, frame_3, SignIn_entry_phone, SignIn_entry_password
 
     frame_2.destroy()
-    frame_4.destroy()
+    frame_4.pack_forget()
 
     label_1 = Label(frame_3, text = "Phone No : ")
     label_2 = Label(frame_3, text = "Password : ")
@@ -220,9 +286,10 @@ def Step_SignIn_Cust():
 #User SignUp
 def Step_SignUp_Cust():
 
-    global root, frame_2, frame_4, SignUp_entry_phone, SignUp_entry_name, SignUp_entry_email, SignUp_entry_password, SignUp_entry_repassword
+    global root, frame_2, frame_3, frame_4, SignUp_entry_phone, SignUp_entry_name, SignUp_entry_email, SignUp_entry_password, SignUp_entry_repassword
 
     frame_2.destroy()
+    frame_3.pack_forget()
 
     label_1 = Label(frame_4, text = "Enter your Phone No : ")
     label_2 = Label(frame_4, text = "Enter your Name : ")
@@ -240,7 +307,7 @@ def Step_SignUp_Cust():
     button_1 = Button(frame_4, text = "Submit", command = Input_SignUp)
 
     frame_4.pack()
-    label_header.grid(row = 0, columnspan = 2, sticky = WE)
+    label_header.grid(row = 0, columnspan = 2, sticky = W+E)
     label_1.grid(row = 1, sticky = E)
     label_2.grid(row = 2, sticky = E)
     label_3.grid(row = 3, sticky = E)
@@ -599,6 +666,7 @@ def Step_OrderHistory_Cust():
 
     Count_List = []
 
+    #Variables for Grid Manipulation
     k = 0
     x = 2
     m = 2
@@ -652,6 +720,7 @@ def Step_OrderHistory_Cust():
         Total = IntVar()
         Total.set(i)
         Total_List.append(Total)
+    print(OrderItems_List)
 
     #Labels
     for i in Item_List:
@@ -674,7 +743,7 @@ def Step_OrderHistory_Cust():
 
 
     for i in Label_Timestamps_List:
-        i.grid(row = m, rowspan = Count_List[y], column = 0, sticky = W)
+        i.grid(row = m, rowspan = Count_List[y], column = 0, sticky = W+N)
         m = m + Count_List[y]
         y += 1
 
@@ -685,7 +754,7 @@ def Step_OrderHistory_Cust():
             x += 1
 
     for i in Label_Totals_List:
-        i.grid(row = n, rowspan = Count_List[z], column = 2, sticky = E)
+        i.grid(row = n, rowspan = Count_List[z], column = 2, sticky = E+N)
         n = n + Count_List[z]
         z +=1
 
@@ -752,6 +821,60 @@ def Create_Tables():
                                                    orderDateTime TEXT,
                                                    FOREIGN KEY(custID) REFERENCES Customers(custID))''')
 
+def ID_check(phone):
+
+    if phone == '':
+        return 0
+
+    else:
+
+        c.execute('''SELECT custID
+                     FROM Customers
+                     WHERE custPhone = ?''', (phone,))
+        a = c.fetchone()
+        print(a)
+        if a == None:
+            return 1
+        else:
+            return 2
+
+def Password_Check(phone, Password_entered):
+
+    if Password_entered == '':
+        return 0
+    else:
+        c.execute('''SELECT custPassword
+                     FROM Customers
+                     WHERE custPhone = ?''', (phone,))
+        a = c.fetchone()
+        print(a)
+        Password_retrived = a[0]
+
+        if Password_entered != Password_retrived:
+            return 1
+        else:
+            return 2
+
+def Phone_Email_check(phone, email):
+
+    c.execute('''SELECT custName
+                 FROM Customers
+                 WHERE custPhone = ?''', (phone,))
+    a = c.fetchone()
+
+    c.execute('''SELECT custName
+                 FROM Customers
+                 WHERE custEmail = ?''', (email,))
+    b = c.fetchone()
+
+    if a != None:
+        return 0, a
+
+    elif b != None:
+        return 1, b
+
+    else:
+        return 2
 
 def Custdata_entry(phone, name, email, password):
 
