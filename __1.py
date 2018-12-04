@@ -13,6 +13,11 @@ from tkinter import messagebox  #MessageBox
 
 #RootWindow
 root = Tk()
+image = img.open('Icons/Background.jpg')
+image = image.resize((1400, 750), img.ANTIALIAS)
+bcg = imgtk.PhotoImage(image)
+bcgl = Label(root, image=bcg)
+bcgl.place(x=0, y=0)
 
 #Globals
 
@@ -40,9 +45,9 @@ frame_9 = Frame(root)
 frame_10 = Frame(root)
 frame_11 = Frame(root)
 frame_12 = Frame(root)
-frame_13 = Frame(root)
-frame_14 = Frame(root)
-frame_15 = Frame(root)
+frame_13 = Frame(frame_11)
+frame_14 = Frame(frame_11)
+frame_15 = Frame(frame_11)
 frame_16 = Frame(root)
 frame_17 = Frame(root)
 
@@ -232,6 +237,21 @@ def Input_SignIn():
                 name = Custdata_retrival(e1)
                 Step_Welcome_Cust(name)
 
+def Input_PlacedOrder(Name, PhoneNo, Email, HouseNo, Locality, City):
+
+    e1 = Name.get()
+    print(e1)
+    e2 = PhoneNo.get()
+    print(e2)
+    e3 = Email.get()
+    print(e3)
+    e4 = HouseNo.get()
+    print(e4)
+    e5 = Locality.get()
+    print(e5)
+    e6 = City.get()
+    print(e6)
+
 
 #DropDown-Input
 def DropDown_Input(item_no):
@@ -341,16 +361,18 @@ def Display_MessageBox(info, name = ''):
 def Step_Home():
 
     global root, frame_1
-    root.geometry("1500x750+10+10")
+    root.geometry("1400x750+75+20")
+    root.config(bg = "#282827")
 
-    label_1 = Label(frame_1, text = "Are you a Customer or an Employee?", fg = "Black")
-    button_1 = Button(frame_1, text = "Customer", bg = "gainsboro", fg = "Black", command = Step_Choice_Cust )
-    button_2 = Button(frame_1, text = "Employee", bg = "gainsboro", fg = "Black", command = a )
+    label_1 = Label(frame_1, text = "Are you a Customer or an Employee?", font = ("Comic Sans", 19), bg ="#282827", fg = "ghostwhite", height = 3, width = 35)
+    button_1 = Button(frame_1, text = "Customer", font = ("Comic Sans", 14), bg = "gray35", fg = "white", height = 3, width = 25, command = Step_Choice_Cust)
+    button_2 = Button(frame_1, text = "Employee", font = ("Comic Sans", 14), bg = "gray25", fg = "white", height = 3, width = 25, command = a )
 
-    frame_1.pack()
-    label_1.pack(fill = X)
-    button_1.pack()
-    button_2.pack()
+    frame_1.config(bg = "#282827")
+    frame_1.place(x = 435, y = 190)
+    label_1.grid(row = 1, column = 1)
+    button_1.grid(row = 2, column = 1, sticky = W+E)
+    button_2.grid(row = 3, column = 1, sticky = W+E)
     root.mainloop()
 
 
@@ -360,14 +382,15 @@ def Step_Choice_Cust():
 
     frame_1.destroy()
 
-    label_1 = Label(frame_2, text = "Are you an Existing Customer or a New One?")
-    button_1 = Button(frame_2, text = "Existing User", bg = "gainsboro", fg = "Black", command = Step_SignIn_Cust )
-    button_2 = Button(frame_2, text = "New User", bg = "gainsboro", fg = "Black", command = Step_SignUp_Cust )
+    label_1 = Label(frame_2, text = "SignIn / SignUp", font = ("Comic Sans", 19), bg ="#282827", fg = "ghostwhite", height = 3, width = 35)
+    button_1 = Button(frame_2, text = "SignIn", font = ("Comic Sans", 14), bg = "gray35", fg = "white", height = 3, width = 25, command = Step_SignIn_Cust )
+    button_2 = Button(frame_2, text = "SignUp", font = ("Comic Sans", 14), bg = "gray25", fg = "white", height = 3, width = 25, command = Step_SignUp_Cust )
 
-    frame_2.pack()
-    label_1.pack(fill = X)
-    button_1.pack()
-    button_2.pack()
+    frame_2.config(bg = "#282827")
+    frame_2.place(x = 435, y = 190)
+    label_1.grid(row = 1, column = 1)
+    button_1.grid(row = 2, column = 1, sticky = W+E)
+    button_2.grid(row = 3, column = 1, sticky = W+E)
 
 
 #User SignIn
@@ -377,24 +400,31 @@ def Step_SignIn_Cust():
     frame_2.destroy()
     frame_4.pack_forget()
     frame_4.grid_forget()
+    frame_4.place_forget()
     frame_12.pack_forget()
     frame_12.grid_forget()
+    frame_12.place_forget()
 
-    label_1 = Label(frame_3, text = "Phone No : ")
-    label_2 = Label(frame_3, text = "Password : ")
-    label_header = Label(frame_3, text = "Please enter your Login Details")
-    SignIn_entry_phone = Entry(frame_3)
-    SignIn_entry_password = Entry(frame_3)
-    button_1 = Button(frame_3, text = "Submit", command = Input_SignIn)
-    button_2 = Button(frame_3, text = "Forgot Password?", command = Step_PasswordRecovery_Cust)
-    frame_3.pack()
-    label_header.grid(row = 0, columnspan = 2)
-    label_1.grid(row = 1, sticky = E)
-    label_2.grid(row = 2, sticky = E)
-    SignIn_entry_phone.grid(row = 1, column = 1)
-    SignIn_entry_password.grid(row = 2, column = 1)
-    button_1.grid(row = 3, column = 0)
-    button_2.grid(row = 3, column = 1)
+    label_1 = Label(frame_3, text = "Phone No : ", font = ("Comic Sans", 14), bg = "gray35", fg = "white", height = 2, width = 15)
+    label_2 = Label(frame_3, text = "Password : ", font = ("Comic Sans", 14), bg = "gray25", fg = "white", height = 2, width = 15)
+    label_blank = Label(frame_3, text = "   ", font = ("Comic Sans", 14), bg = "#282827", fg = "white", height = 2, width = 15)
+    label_header = Label(frame_3, text = "Please enter your Login Details", font = ("Comic Sans", 19), bg ="#282827", fg = "ghostwhite", height = 4, width = 35)
+    SignIn_entry_phone = Entry(frame_3, font = ("Comic Sans", 25), bg = "white", fg = "gray11", width = 15)
+    SignIn_entry_password = Entry(frame_3, show = "*", font = ("Comic Sans", 25), bg = "white", fg = "gray11", width = 15)
+    button_1 = Button(frame_3, text = "Submit", font = ("Comic Sans", 12), bg = "gray30", fg = "white", height = 2, width = 15, command = Input_SignIn)
+    button_2 = Button(frame_3, text = "Forgot Password?", font = ("Comic Sans", 12), bg = "gray30", fg = "white", height = 2, width = 15, command = Step_PasswordRecovery_Cust)
+
+    frame_3.config(bg = "#282827")
+    frame_3.place(x = 435, y = 150)
+    label_header.grid(row = 1, column = 0, columnspan = 2)
+    label_1.grid(row = 2, column = 0, sticky = E, padx = 10, pady = 10)
+    label_2.grid(row = 3, column = 0, sticky = E, padx = 10)
+    SignIn_entry_phone.grid(row = 2, column = 1, sticky = W, padx = 10)
+    SignIn_entry_password.grid(row = 3, column = 1, sticky = W, padx = 10)
+    label_blank.grid(row = 4, column = 0)
+    button_1.grid(row = 5, column = 0, pady = 10, sticky = E)
+    button_2.grid(row = 5, column = 1, pady = 10)
+
 
 #User Email for Password Recovery
 def Step_PasswordRecovery_Cust():
@@ -403,17 +433,19 @@ def Step_PasswordRecovery_Cust():
 
     frame_3.pack_forget()
     frame_3.grid_forget()
+    frame_3.place_forget()
 
-    label_1 = Label(frame_12, text = "Please enter your email")
-    label_2 = Label(frame_12, text = "Email")
-    Email_entry = Entry(frame_12)
-    button_1 = Button(frame_12, text = "Submit", command = lambda : Password_Recovery(Email_entry))
+    label_1 = Label(frame_12, text = "Please enter your email", font = ("Comic Sans", 19), bg ="#282827", fg = "ghostwhite", height = 3, width = 35)
+    label_2 = Label(frame_12, text = "Email", font = ("Comic Sans", 15), bg = "gray35", fg = "white", height = 2, width = 15)
+    Email_entry = Entry(frame_12, font = ("Comic Sans", 25), bg = "white", fg = "gray11", width = 15)
+    button_1 = Button(frame_12, text = "Submit", font = ("Comic Sans", 12), bg = "gray30", fg = "white", height = 2, width = 15, command = lambda : Password_Recovery(Email_entry))
 
-    frame_12.pack()
-    label_1.grid(row = 0, columnspan = 2, sticky = W+E)
-    label_2.grid(row = 1, column = 0, sticky = E)
-    Email_entry.grid(row = 1, column = 1, sticky = W)
-    button_1.grid(row = 2, columnspan = 2)
+    frame_12.config(bg = "#282827")
+    frame_12.place(x = 435, y = 190)
+    label_1.grid(row = 1, column = 0, columnspan = 2, padx = 10)
+    label_2.grid(row = 2, column = 0, sticky = E, padx = 10)
+    Email_entry.grid(row = 2, column = 1, sticky = W, padx = 10)
+    button_1.grid(row = 3, column = 0, columnspan = 2, pady = 10)
 
 #User SignUp
 def Step_SignUp_Cust():
@@ -423,38 +455,41 @@ def Step_SignUp_Cust():
     frame_2.destroy()
     frame_3.pack_forget()
     frame_3.grid_forget()
+    frame_3.place_forget()
 
-    label_1 = Label(frame_4, text = "Enter your Phone No : ")
-    label_2 = Label(frame_4, text = "Enter your Name : ")
-    label_3 = Label(frame_4, text = "Enter your Email : ")
-    label_4 = Label(frame_4, text = "Set a Password : ")
-    label_5 = Label(frame_4, text = "Retype Password")
-    label_header = Label(frame_4, text = "Enter your Details : ")
+    label_1 = Label(frame_4, text = "Enter your Phone No : ", font = ("Comic Sans", 14), bg = "gray25", fg = "white", height = 2, width = 17)
+    label_2 = Label(frame_4, text = "Enter your Name : ", font = ("Comic Sans", 14), bg = "gray35", fg = "white", height = 2, width = 17)
+    label_3 = Label(frame_4, text = "Enter your Email : ", font = ("Comic Sans", 14), bg = "gray25", fg = "white", height = 2, width = 17)
+    label_4 = Label(frame_4, text = "Set a Password : ", font = ("Comic Sans", 14), bg = "gray35", fg = "white", height = 2, width = 17)
+    label_5 = Label(frame_4, text = "Retype Password : ", font = ("Comic Sans", 14), bg = "gray25", fg = "white", height = 2, width = 17)
+    label_header = Label(frame_4, text = "Enter your Details : ", font = ("Comic Sans", 19), bg ="#282827", fg = "ghostwhite", height = 4, width = 35)
+    label_blank = Label(frame_4, text = "   ", font = ("Comic Sans", 14), bg = "#282827", fg = "white", height = 2, width = 15)
 
+    SignUp_entry_phone = Entry(frame_4, font = ("Comic Sans", 25), bg = "white", fg = "gray11", width = 15)
+    SignUp_entry_name = Entry(frame_4, font = ("Comic Sans", 25), bg = "white", fg = "gray11", width = 15)
+    SignUp_entry_email = Entry(frame_4, font = ("Comic Sans", 25), bg = "white", fg = "gray11", width = 15)
+    SignUp_entry_password = Entry(frame_4, font = ("Comic Sans", 25), bg = "white", fg = "gray11", width = 15)
+    SignUp_entry_repassword = Entry(frame_4, font = ("Comic Sans", 25), bg = "white", fg = "gray11", width = 15)
 
-    SignUp_entry_phone = Entry(frame_4)
-    SignUp_entry_name = Entry(frame_4)
-    SignUp_entry_email = Entry(frame_4)
-    SignUp_entry_password = Entry(frame_4)
-    SignUp_entry_repassword = Entry(frame_4)
+    button_1 = Button(frame_4, text = "Submit", font = ("Comic Sans", 12), bg = "gray30", fg = "white", height = 2, width = 15, command = Input_SignUp)
 
-    button_1 = Button(frame_4, text = "Submit", command = Input_SignUp)
+    frame_4.config(bg = "#282827")
+    frame_4.place(x = 435, y = 105)
+    label_header.grid(row = 1, column = 0, columnspan = 2)
+    label_1.grid(row = 2, column = 0, sticky = E, padx = 10, ipadx = 10)
+    label_2.grid(row = 3, column = 0, sticky = E, padx = 10, ipadx = 10, pady = 10)
+    label_3.grid(row = 4, column = 0, sticky = E, padx = 10, ipadx = 10)
+    label_4.grid(row = 5, column = 0, sticky = E, padx = 10, ipadx = 10, pady = 10)
+    label_5.grid(row = 6, column = 0, sticky = E, padx = 10, ipadx = 10)
 
-    frame_4.pack()
-    label_header.grid(row = 0, columnspan = 2, sticky = W+E)
-    label_1.grid(row = 1, sticky = E)
-    label_2.grid(row = 2, sticky = E)
-    label_3.grid(row = 3, sticky = E)
-    label_4.grid(row = 4, sticky = E)
-    label_5.grid(row = 5, sticky = E)
+    SignUp_entry_phone.grid(row = 2, column = 1, sticky = W, padx= 10)
+    SignUp_entry_name.grid(row = 3, column = 1, sticky = W, padx= 10)
+    SignUp_entry_email.grid(row = 4, column = 1, sticky = W, padx= 10)
+    SignUp_entry_password.grid(row = 5, column = 1, sticky = W, padx= 10)
+    SignUp_entry_repassword.grid(row = 6, column = 1, sticky = W, padx= 10)
 
-    SignUp_entry_phone.grid(row = 1, column = 1)
-    SignUp_entry_name.grid(row = 2, column = 1)
-    SignUp_entry_email.grid(row = 3, column = 1)
-    SignUp_entry_password.grid(row = 4, column = 1)
-    SignUp_entry_repassword.grid(row = 5, column = 1)
-
-    button_1.grid(columnspan = 2)
+    label_blank.grid(row = 7, column = 0)
+    button_1.grid(row = 8, column = 0, columnspan = 2, pady = 10)
 
 
 #User Welcome
@@ -468,14 +503,15 @@ def Step_Welcome_Cust(name):
     var_1 = StringVar()
     var_1.set("Welcome " + str(name[0]))
 
-    label_1 = Label (frame_5, textvariable = var_1,)
-    button_1 = Button(frame_5, text = "New Order", bg = "gainsboro", fg = "Black", command = Step_Menu_Cust)
-    button_2 = Button(frame_5, text = "Order History", bg = "gainsboro", fg = "Black", command = Step_OrderHistory_Cust)
+    label_1 = Label (frame_5, textvariable = var_1, font = ("Comic Sans", 19), bg ="#282827", fg = "ghostwhite", height = 3, width = 35)
+    button_1 = Button(frame_5, text = "New Order", font = ("Comic Sans", 14), bg = "gray35", fg = "white", height = 3, width = 25, command = Step_Menu_Cust)
+    button_2 = Button(frame_5, text = "Order History", font = ("Comic Sans", 14), bg = "gray25", fg = "white", height = 3, width = 25, command = Step_OrderHistory_Cust)
 
-    frame_5.pack()
-    label_1.pack(fill = X)
-    button_1.pack()
-    button_2.pack()
+    frame_5.config(bg = "#282827")
+    frame_5.place(x = 435, y = 190)
+    label_1.grid(row = 1, column = 1)
+    button_1.grid(row = 2, column = 1, sticky = W+E)
+    button_2.grid(row = 3, column = 1, sticky = W+E)
 
 
 #Predefined Menu
@@ -699,7 +735,7 @@ def Step_Menu_Cust():
     option_4b.grid(row = 2, column = 7, sticky = N)
     button_4.grid(row = 3, column = 7)
     label_100.grid(row = 4, columnspan = 7)
-    ttk.Separator(frame_6).place(x = 0, y = 170, relwidth=2)
+    ttk.Separator(frame_6).place(x = 0, y = 190, relwidth=2)
 
     #NonVeg_Pizzas-Pack
     frame_7.pack()
@@ -895,11 +931,17 @@ def Step_OrderHistory_Cust():
 #Bill Display
 def Step_Bill_Cust(order_list, amount_list):
 
-    global root, frame_6, frame_7, frame_8, frame_9, frame_11, Order_Total
+    global root, frame_6, frame_7, frame_8, frame_9, frame_11, frame_13, frame_14, Order_Total
 
     k = 0
-    Bill_List = []
-    Label_List = []
+    Item_List = []
+    Quantity_List = []
+    Size_List = []
+    Price_List = []
+    Label_Item_List = []
+    Label_Size_List = []
+    Label_Quantity_List = []
+    Label_Price_List = []
 
     frame_6.destroy()
     frame_7.destroy()
@@ -910,31 +952,139 @@ def Step_Bill_Cust(order_list, amount_list):
         Order_Total += i
 
     Total = StringVar()
-    Total.set("Your total payable amount is: " + str(Order_Total))
+    Total.set("Your total payable amount is : " + str(Order_Total))
 
+    #StringVars
     for i in order_list:
-        Bill = StringVar()
-        Bill.set("Item No " + str(i[0]) + " (" + i[1] + " ) X " + str(i[2]) + " = " + str(amount_list[k]))
-        Bill_List.append(Bill)
+        #Items Stringvars
+        Item = StringVar()
+        Item.set(str(i[0]))
+        Item_List.append(Item)
+
+        #Size Stringvars
+        Size = StringVar()
+        Size.set(i[1])
+        Size_List.append(Size)
+
+        #Quantity Stringvars
+        Quantity = StringVar()
+        Quantity.set(str(i[2]))
+        Quantity_List.append(Quantity)
+
+        #Price Stringvars
+        Price = StringVar()
+        Price.set(str(amount_list[k]))
+        Price_List.append(Price)
         k += 1
 
-    #Labels
-    label_1 = Label(frame_11, text = "Total Bill")
+    label_header = Label(frame_11, text = "Total Bill", font = ("Comic Sans", 18), bg ="#282827", fg = "ghostwhite", height = 2, width = 30)
 
-    for i in Bill_List:
-        label_Bill = Label(frame_11, textvariable = i,)
-        Label_List.append(label_Bill)
+    #Sub-Frame-Bill Labels
+    label_itemsheader = Label(frame_15, text = "Your Order Details", font = ("Comic Sans", 16), bg ="gray25", fg = "ghostwhite", height = 2, width = 20)
+    label_name_itemheader = Label(frame_15, text = "Item", font = ("Comic Sans", 13), bg ="gray30", fg = "ghostwhite", height = 2, width = 20)
+    label_name_sizeheader = Label(frame_15, text = "Quantity", font = ("Comic Sans", 13), bg ="gray30", fg = "ghostwhite", height = 2, width = 20)
+    label_name_quantityheader = Label(frame_15, text = "Size", font = ("Comic Sans", 13), bg ="gray30", fg = "ghostwhite", height = 2, width = 20)
+    label_name_priceheader = Label(frame_15, text = "Price", font = ("Comic Sans", 13), bg ="gray30", fg = "ghostwhite", height = 2, width = 20)
 
-    label_Total = Label(frame_11, textvariable = Total)
+    for i in Item_List:
+        label_Item = Label(frame_15, textvariable = i, font = ("Comic Sans", 12), bg = "gray35", fg = "white", height = 2, width = 20)
+        Label_Item_List.append(label_Item)
+
+    for i in Size_List:
+        label_Size = Label(frame_15, textvariable = i, font = ("Comic Sans", 12), bg = "gray35", fg = "white", height = 2, width = 20)
+        Label_Size_List.append(label_Size)
+
+    for i in Quantity_List:
+        label_Quantity = Label(frame_15, textvariable = i, font = ("Comic Sans", 12), bg = "gray35", fg = "white", height = 2, width = 20)
+        Label_Quantity_List.append(label_Quantity)
+
+    for i in Price_List:
+        label_Price = Label(frame_15, textvariable = i, font = ("Comic Sans", 12), bg = "gray35", fg = "white", height = 2, width = 20)
+        Label_Price_List.append(label_Price)
+
+    label_Total = Label(frame_15, textvariable = Total, font = ("Comic Sans", 15), bg = "gray25", fg = "white", height = 2, width = 20)
+
+    #Sub-Frame-Name Labels
+    label_subheader_info = Label(frame_13, text = "Fill in the following Details :", font = ("Comic Sans", 16), bg ="gray25", fg = "ghostwhite", height = 2, width = 35)
+    label_info_1 = Label(frame_13, text = "Name :", font = ("Comic Sans", 13), bg = "gray35", fg = "white", height = 2, width = 20)
+    label_info_2 = Label(frame_13, text = "Phone :", font = ("Comic Sans", 13), bg = "gray35", fg = "white", height = 2, width = 20)
+    label_info_3 = Label(frame_13, text = "Email :", font = ("Comic Sans", 13), bg = "gray35", fg = "white", height = 2, width = 20)
+
+    Info_entry_name = Entry(frame_13, font = ("Comic Sans", 20), bg = "white", fg = "gray11", width = 15)
+    Info_entry_phone = Entry(frame_13, font = ("Comic Sans", 20), bg = "white", fg = "gray11", width = 15)
+    Info_entry_email = Entry(frame_13, font = ("Comic Sans", 20), bg = "white", fg = "gray11", width = 15)
+
+
+    #Sub-Frame-Address Labels
+    label_subheader_address = Label(frame_14, text = "Enter your address Details :", font = ("Comic Sans", 16), bg ="gray25", fg = "ghostwhite", height = 2, width = 35)
+    label_address_1 = Label(frame_14, text = "House No: ", font = ("Comic Sans", 13), bg = "gray35", fg = "white", height = 2, width = 20)
+    label_address_2 = Label(frame_14, text = "Locality: ", font = ("Comic Sans", 13), bg = "gray35", fg = "white", height = 2, width = 20)
+    label_address_3 = Label(frame_14, text = "City: ", font = ("Comic Sans", 13), bg = "gray35", fg = "white", height = 2, width = 20)
+
+    Address_entry_houseno = Entry(frame_14, font = ("Comic Sans", 20), bg = "white", fg = "gray11", width = 15)
+    Address_entry_locality = Entry(frame_14, font = ("Comic Sans", 20), bg = "white", fg = "gray11", width = 15)
+    Address_entry_city = Entry(frame_14, font = ("Comic Sans", 20), bg = "white", fg = "gray11", width = 15)
+
+    button_1 = Button(frame_11, text = "Place Order", font = ("Comic Sans", 14), bg = "gray20", fg = "white", height = 2, width = 15, command = lambda : Input_PlacedOrder(Info_entry_name, Info_entry_phone, Info_entry_email,
+                                                                                                                                                                           Address_entry_houseno, Address_entry_locality, Address_entry_city))
 
     #Packing
-    frame_11.pack()
-    label_1.pack()
+    frame_11.config(bg = "snow")
+    frame_11.place(x= 90, y = 20)
+    label_header.grid(row = 1, column = 0, columnspan = 3, sticky = W+E)
 
-    for i in Label_List:
-        i.pack()
+    frame_13.config(bg = "#282827")
+    frame_13.grid(row = 2, column = 0, padx = 25, pady = 40)
+    label_subheader_info.grid(row = 1, column = 0, columnspan = 3, sticky = W+E)
+    label_info_1.grid(row = 2, column = 0, sticky = E, padx = 10, ipadx = 10, pady = 10)
+    label_info_2.grid(row = 3, column = 0, sticky = E, padx = 10, ipadx = 10)
+    label_info_3.grid(row = 4, column = 0, sticky = E, padx = 10, ipadx = 10, pady = 10)
 
-    label_Total.pack()
+    Info_entry_name.grid(row = 2, column = 1, sticky = W, padx = 10)
+    Info_entry_phone.grid(row = 3, column = 1, sticky = W, padx = 10)
+    Info_entry_email.grid(row = 4, column = 1, sticky = W, padx = 10)
+
+    frame_14.config(bg = "#282827")
+    frame_14.grid(row = 2, column = 2, padx = 25, pady = 40)
+    label_subheader_address.grid(row = 1, column = 0, columnspan = 2, sticky = W+E)
+    label_address_1.grid(row = 2, column = 0, sticky = E, padx = 10, ipadx = 10, pady = 10)
+    label_address_2.grid(row = 3, column = 0, sticky = E, padx = 10, ipadx = 10)
+    label_address_3.grid(row = 4, column = 0, sticky = E, padx = 10, ipadx = 10, pady = 10)
+
+    Address_entry_houseno.grid(row = 2, column = 1, sticky = W, padx = 10)
+    Address_entry_locality.grid(row = 3, column = 1, sticky = W, padx = 10)
+    Address_entry_city.grid(row = 4, column = 1, sticky = W, padx = 10)
+
+    #Order Details
+    frame_15.config(bg = "#282827")
+    frame_15.grid(row = 3, column = 0, columnspan = 3)
+    label_itemsheader.grid(row = 1, column = 0, columnspan =  4, sticky = W+E)
+    label_name_itemheader.grid(row = 2, column = 0, padx = 20, pady = 10)
+    label_name_quantityheader.grid(row = 2, column = 1, padx = 15, pady = 10)
+    label_name_sizeheader.grid(row = 2, column = 2, padx = 15, pady = 10)
+    label_name_priceheader.grid(row = 2, column = 3, padx = 20, pady = 10)
+
+    m = 3
+    for i in Label_Item_List:
+        i.grid(row = m, column = 0)
+        m += 1
+    m = 3
+    for i in Label_Size_List:
+        i.grid(row = m, column = 1)
+        m += 1
+    m = 3
+    for i in Label_Quantity_List:
+        i.grid(row = m, column = 2)
+        m += 1
+    m = 3
+    for i in Label_Price_List:
+        i.grid(row = m, column = 3)
+        m += 1
+
+    label_Total.grid(row = m, column = 0, columnspan = 4, sticky = W+E, pady = 15)
+
+    button_1.grid(row = 2, column = 1)
+
 
     Orderdata_entry(order_list, amount_list)
 
