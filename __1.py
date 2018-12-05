@@ -13,7 +13,7 @@ from tkinter import messagebox  #MessageBox
 
 #RootWindow
 root = Tk()
-image = img.open('Icons/Background.jpg')
+image = img.open('Icons&Images/Background.jpg')
 image = image.resize((1400, 750), img.ANTIALIAS)
 bcg = imgtk.PhotoImage(image)
 bcgl = Label(root, image=bcg)
@@ -30,26 +30,27 @@ SignUp_entry_repassword = ''
 customerID = 0
 customerName = ''
 Order_Total = 0
+Order_No = 0
 
 
 #Frame Globals
+frame_menu = Frame(root)
 frame_1 = Frame(root)
 frame_2 = Frame(root)
 frame_3 = Frame(root)
 frame_4 = Frame(root)
 frame_5 = Frame(root)
-frame_6 = Frame(root)
-frame_7 = Frame(root)
-frame_8 = Frame(root)
-frame_9 = Frame(root)
+frame_6 = Frame(frame_menu)
+frame_7 = Frame(frame_menu)
+frame_8 = Frame(frame_menu)
+frame_9 = Frame(frame_menu)
 frame_10 = Frame(root)
 frame_11 = Frame(root)
 frame_12 = Frame(root)
 frame_13 = Frame(frame_11)
 frame_14 = Frame(frame_11)
 frame_15 = Frame(frame_11)
-frame_16 = Frame(root)
-frame_17 = Frame(root)
+
 
 #List Globals
 Size_List = []
@@ -58,16 +59,16 @@ Quantity_List = []
 #Dictionary Globals
 Dict_1 = {}
 Dict_2 = {}
-Dict_Name = {1:1, 2:2, 3:3, 4:4, 5:5, 6:6, 7:7, 8:8, 9:9,
-             10:10, 11:11, 12:12, 13:13, 14:14, 15:15, 16:16}
-Dict_smallPrice = {1:110, 2:125, 3:100, 4:135, 5:150, 6:170, 7:165, 8:190,
-                   9:25, 10:75, 11:95, 12:135, 13:40, 14:55, 15:75, 16:110}
+Dict_Name = {1:"Double Cheese Margherita", 2:"Cheese & Corn", 3:"Peppy Panner", 4:"Veg Extravaganza", 5:"Chicken Sausage", 6:"Pepper Barbeque & Onion", 7:"Chicken Dominator", 8:"Non Veg Supreme", 9:"Garlic Bread",
+             10:"Taco Mexicana", 11:"Pasta Italiano", 12:"Choco Lava Cake", 13:"Cocacola", 14:"Sprite", 15:"Mountain Dew", 16:"Pepsi"}
+Dict_smallPrice = {1:100, 2:110, 3:125, 4:135, 5:150, 6:170, 7:175, 8:190,
+                   9:85, 10:75, 11:130, 12:60, 13:40, 14:45, 15:45, 16:40}
 
-Dict_mediumPrice = {1:210, 2:235, 3:215, 4:270, 5:300, 6:345, 7:320, 8:365,
-                   9:40, 10:95, 11:110, 12:155, 13:50, 14:70, 15:125, 16:205}
+Dict_mediumPrice = {1:215, 2:210, 3:235, 4:270, 5:300, 6:345, 7:350, 8:365,
+                   9:110, 10:95, 11:170, 12:80, 13:60, 14:70, 15:80, 16:60}
 
-Dict_largePrice = {1:305, 2:315, 3:280, 4:385, 5:450, 6:480, 7:535, 8:595,
-                   9:65, 10:105, 11:140, 12:170, 13:65, 14:135, 15:195, 16:285}
+Dict_largePrice = {1:280, 2:305, 3:315, 4:385, 5:450, 6:480, 7:535, 8:595,
+                   9:65, 10:105, 11:140, 12:170, 13:80, 14:95, 15:95, 16:80}
 
 #Database Connetion
 conn = sqlite3.connect('pizza.db')
@@ -156,16 +157,15 @@ def Input_SignUp():
     e4 = SignUp_entry_password.get()
     e5 = SignUp_entry_repassword.get()
     digit = e1.isdigit()
-    #alpha = e2.isalpha()
-    regex = re.compile('[@_!#$%^&*()<>?/\|}{~:]')
+    alpha = e2.isalpha()
 
     if e1 == '' or e2 == '' or e3 == '' or e4 == '' or e5 == '':
-        Display_MessageBox("SignUp_missing")
+        Display_MessageBox("Info_missing")
 
     elif digit != True or len(e1) != 10:
         Display_MessageBox("Phone_error")
 
-    #elif regex.search(e2) != 0: #or alpha != True:
+    elif alpha != True:
         Display_MessageBox("Name_invalid")
 
     elif e4 != e5:
@@ -239,18 +239,30 @@ def Input_SignIn():
 
 def Input_PlacedOrder(Name, PhoneNo, Email, HouseNo, Locality, City):
 
+    global root
+
     e1 = Name.get()
-    print(e1)
     e2 = PhoneNo.get()
-    print(e2)
     e3 = Email.get()
-    print(e3)
     e4 = HouseNo.get()
-    print(e4)
     e5 = Locality.get()
-    print(e5)
     e6 = City.get()
-    print(e6)
+    alpha = e1.isalpha()
+    digit = e2.isdigit()
+
+    if e1 == '' or e2 == '' or e3 == '' or e4 == '' or e5 == '' or e6 == '':
+        Display_MessageBox("Info_missing")
+
+    elif alpha != True:
+        Display_MessageBox("Name_invalid")
+
+    elif digit != True or len(e2) != 10:
+        Display_MessageBox("Phone_error")
+
+    else:
+        messagebox.showinfo("Order Placed", "Dear " + e1 + " your order has been placed to\n\t" + e4 + ", " + e5 + ",\n\t" + e6 + "\nYou can expect delivery within the hour")
+        Addrdata_entry(e1, e2, e3, e4, e5, e6)
+        root.destroy()
 
 
 #DropDown-Input
@@ -263,11 +275,15 @@ def DropDown_Input(item_no):
         a = Size_List[item_no].get()
         b = Quantity_List[item_no].get()
 
-        Dict_1[item_no] = a
-        Dict_2[item_no] = b
+        if a == "Size":
+            Display_MessageBox("Size_error")
 
-        print(Dict_1)
-        print(Dict_2)
+        elif b == "Quantity":
+            Display_MessageBox("Quantity_error")
+
+        else:
+            Dict_1[item_no] = a
+            Dict_2[item_no] = b
 
     #The Done Button
     else:
@@ -320,7 +336,7 @@ def Display_MessageBox(info, name = ''):
         ans = messagebox.askquestion("Are you a new user", "The entered phone no does not match any of our users,\n Would you like to SignUp?")
         return ans
 
-    elif info == 'SignUp_missing':
+    elif info == 'Info_missing':
         messagebox.showinfo("Fields Empty", "Please fill all the details")
 
     elif info == 'Phone_error':
@@ -356,6 +372,11 @@ def Display_MessageBox(info, name = ''):
     elif info == 'Internet_issue':
         messagebox.showinfo("Internet Error", "Please check your internet connection")
 
+    elif info == 'Size_error':
+        messagebox.showinfo("Wrong size", "Please select a valid size")
+
+    elif info == 'Quantity_error':
+        messagebox.showinfo("Wrong Quantity", "Please select a valid quantity")
 
 #The Home Frame
 def Step_Home():
@@ -517,304 +538,464 @@ def Step_Welcome_Cust(name):
 #Predefined Menu
 def Step_Menu_Cust():
 
-    global root, frame_5, frame_6, frame_7, frame_8, frame_9, Size, Quantity, Size_List, Quantity_List, Dict_Name
+    global root, frame_5, frame_6, frame_7, frame_8, frame_9, frame_menu, Size, Quantity, Size_List, Quantity_List, Dict_Name, Dict_Name, Dict_smallPrice, Dict_mediumPrice, Dict_largePrice
+    PizzasPrices_List = []
+    SidesPrices_List = []
+    BeveragesPrices_List = []
 
     frame_5.destroy()
 
-    #Veg_Pizzas-ImageImport
-    a_1 = img.open("Icons/1.png")
-    a_1 = a_1.resize((100, 100), img.ANTIALIAS)
-    b_1 = imgtk.PhotoImage(a_1)
-    a_2 = img.open("Icons/2.png")
-    a_2 = a_2.resize((100, 100), img.ANTIALIAS)
-    b_2 = imgtk.PhotoImage(a_2)
-    a_3 = img.open("Icons/3.png")
-    a_3 = a_3.resize((100, 100), img.ANTIALIAS)
-    b_3 = imgtk.PhotoImage(a_3)
-    a_4 = img.open("Icons/4.png")
-    a_4 = a_4.resize((100, 100), img.ANTIALIAS)
-    b_4 = imgtk.PhotoImage(a_4)
+    for i in range(1, 9):
+        Price = StringVar()
+        Price.set("S : \u20B9" + str(Dict_smallPrice[i]) + "\nM : \u20B9" + str(Dict_mediumPrice[i]) + "\nL : \u20B9" + str(Dict_largePrice[i]))
+        PizzasPrices_List.append(Price)
 
-    #NonVeg_Pizzas-ImageImport
-    a_5 = img.open("Icons/1.png")
-    a_5 = a_5.resize((100, 100), img.ANTIALIAS)
-    b_5 = imgtk.PhotoImage(a_5)
-    a_6 = img.open("Icons/2.png")
-    a_6 = a_6.resize((100, 100), img.ANTIALIAS)
-    b_6 = imgtk.PhotoImage(a_6)
-    a_7 = img.open("Icons/3.png")
-    a_7 = a_7.resize((100, 100), img.ANTIALIAS)
-    b_7 = imgtk.PhotoImage(a_7)
-    a_8 = img.open("Icons/4.png")
-    a_8 = a_8.resize((100, 100), img.ANTIALIAS)
-    b_8 = imgtk.PhotoImage(a_8)
+    for i in range(9, 13):
+        Price = StringVar()
+        Price.set("S : \u20B9" + str(Dict_smallPrice[i]) + "\nM : \u20B9" + str(Dict_mediumPrice[i]))
+        SidesPrices_List.append(Price)
 
-    #Sides-ImageImport
-    a_9 = img.open("Icons/1.png")
-    a_9 = a_9.resize((100, 100), img.ANTIALIAS)
-    b_9 = imgtk.PhotoImage(a_9)
-    a_10 = img.open("Icons/2.png")
-    a_10 = a_10.resize((100, 100), img.ANTIALIAS)
-    b_10 = imgtk.PhotoImage(a_10)
-    a_11 = img.open("Icons/3.png")
-    a_11 = a_11.resize((100, 100), img.ANTIALIAS)
-    b_11 = imgtk.PhotoImage(a_11)
-    a_12 = img.open("Icons/4.png")
-    a_12 = a_12.resize((100, 100), img.ANTIALIAS)
-    b_12 = imgtk.PhotoImage(a_12)
-
-    #Beverages-ImageImport
-    a_13 = img.open("Icons/1.png")
-    a_13 = a_13.resize((100, 100), img.ANTIALIAS)
-    b_13 = imgtk.PhotoImage(a_13)
-    a_14 = img.open("Icons/2.png")
-    a_14 = a_14.resize((100, 100), img.ANTIALIAS)
-    b_14 = imgtk.PhotoImage(a_14)
-    a_15 = img.open("Icons/3.png")
-    a_15 = a_15.resize((100, 100), img.ANTIALIAS)
-    b_15 = imgtk.PhotoImage(a_15)
-    a_16 = img.open("Icons/4.png")
-    a_16 = a_16.resize((100, 100), img.ANTIALIAS)
-    b_16 = imgtk.PhotoImage(a_16)
-
-
-    #Veg_Pizzas-Image_Ready
-    label_heading1 = Label(frame_6, text = "Veg Pizzas")
-    label_1 = Label(frame_6, image = b_1)
-    label_1.image = b_1
-    label_name1 = Label(frame_6, text = str(Dict_Name[1]))
-    label_2 = Label(frame_6, image = b_2)
-    label_2.image = b_2
-    label_name2 = Label(frame_6, text = str(Dict_Name[2]))
-    label_3 = Label(frame_6, image = b_3)
-    label_3.image = b_3
-    label_name3 = Label(frame_6, text = str(Dict_Name[3]))
-    label_4 = Label(frame_6, image = b_4)
-    label_4.image = b_4
-    label_name4 = Label(frame_6, text = str(Dict_Name[4]))
-
-    #NonVeg_Pizzas-Image_Ready
-    label_heading2 = Label(frame_7, text = "Non - Veg Pizzas")
-    label_5 = Label(frame_7, image = b_5)
-    label_5.image = b_5
-    label_name5 = Label(frame_7, text = str(Dict_Name[5]))
-    label_6 = Label(frame_7, image = b_6)
-    label_6.image = b_6
-    label_name6 = Label(frame_7, text = str(Dict_Name[6]))
-    label_7 = Label(frame_7, image = b_7)
-    label_7.image = b_7
-    label_name7 = Label(frame_7, text = str(Dict_Name[7]))
-    label_8 = Label(frame_7, image = b_8)
-    label_8.image = b_8
-    label_name8 = Label(frame_7, text = str(Dict_Name[8]))
-
-    #Sides-Image_Ready
-    label_heading3 = Label(frame_8, text = "Sides")
-    label_9 = Label(frame_8, image = b_9)
-    label_9.image = b_9
-    label_name9 = Label(frame_8, text = str(Dict_Name[9]))
-    label_10 = Label(frame_8, image = b_10)
-    label_10.image = b_10
-    label_name10 = Label(frame_8, text = str(Dict_Name[10]))
-    label_11 = Label(frame_8, image = b_11)
-    label_11.image = b_11
-    label_name11 = Label(frame_8, text = str(Dict_Name[11]))
-    label_12 = Label(frame_8, image = b_12)
-    label_12.image = b_12
-    label_name12 = Label(frame_8, text = str(Dict_Name[12]))
-
-    #Beverages-Image_Ready
-    label_heading4 = Label(frame_9, text = "Beverages")
-    label_13 = Label(frame_9, image = b_13)
-    label_13.image = b_13
-    label_name13 = Label(frame_9, text = str(Dict_Name[13]))
-    label_14 = Label(frame_9, image = b_14)
-    label_14.image = b_14
-    label_name14 = Label(frame_9, text = str(Dict_Name[14]))
-    label_15 = Label(frame_9, image = b_15)
-    label_15.image = b_15
-    label_name15 = Label(frame_9, text = str(Dict_Name[15]))
-    label_16 = Label(frame_9, image = b_16)
-    label_16.image = b_16
-    label_name16 = Label(frame_9, text = str(Dict_Name[16]))
-
-    #Spacing
-    label_100 = Label(frame_6, text = " ")
-    label_200 = Label(frame_7, text = " ")
-    label_300 = Label(frame_8, text = " ")
-    label_400 = Label(frame_9, text = " ")
-
+    for i in range(13, 17):
+        Price = StringVar()
+        Price.set("S : \u20B9" + str(Dict_smallPrice[i]) + "\nM : \u20B9" + str(Dict_mediumPrice[i]) + "\nL : \u20B9" + str(Dict_largePrice[i]))
+        BeveragesPrices_List.append(Price)
 
     #Generating Multiple StringVars
     for i in range(0, 17):
 
         Size = StringVar(root)
+        Size.set("Size")
         Size_List.append(Size)
 
         Quantity = StringVar(root)
+        Quantity.set("Quantity")
         Quantity_List.append(Quantity)
 
+    def Pizzas_Pack():
 
-    #Option-Menus
-    option_1a = OptionMenu(frame_6, Size_List[1], "Small", "Medium", "Large")
-    option_1b = OptionMenu(frame_6, Quantity_List[1], "1", "2", "3")
-    option_2a = OptionMenu(frame_6, Size_List[2], "Small", "Medium", "Large")
-    option_2b = OptionMenu(frame_6, Quantity_List[2], "1", "2", "3")
-    option_3a = OptionMenu(frame_6, Size_List[3], "Small", "Medium", "Large")
-    option_3b = OptionMenu(frame_6, Quantity_List[3], "1", "2", "3")
-    option_4a = OptionMenu(frame_6, Size_List[4], "Small", "Medium", "Large")
-    option_4b = OptionMenu(frame_6, Quantity_List[4], "1", "2", "3")
-    option_5a = OptionMenu(frame_7, Size_List[5], "Small", "Medium", "Large")
-    option_5b = OptionMenu(frame_7, Quantity_List[5], "1", "2", "3")
-    option_6a = OptionMenu(frame_7, Size_List[6], "Small", "Medium", "Large")
-    option_6b = OptionMenu(frame_7, Quantity_List[6], "1", "2", "3")
-    option_7a = OptionMenu(frame_7, Size_List[7], "Small", "Medium", "Large")
-    option_7b = OptionMenu(frame_7, Quantity_List[7], "1", "2", "3")
-    option_8a = OptionMenu(frame_7, Size_List[8], "Small", "Medium", "Large")
-    option_8b = OptionMenu(frame_7, Quantity_List[8], "1", "2", "3")
+        frame_7.pack_forget()
+        frame_7.grid_forget()
+        frame_7.place_forget()
+        frame_8.pack_forget()
+        frame_8.grid_forget()
+        frame_8.place_forget()
 
-    option_9a = OptionMenu(frame_8, Size_List[9], "Small", "Medium", "Large")
-    option_9b = OptionMenu(frame_8, Quantity_List[9], "1", "2", "3")
-    option_10a = OptionMenu(frame_8, Size_List[10], "Small", "Medium", "Large")
-    option_10b = OptionMenu(frame_8, Quantity_List[10], "1", "2", "3")
-    option_11a = OptionMenu(frame_8, Size_List[11], "Small", "Medium", "Large")
-    option_11b = OptionMenu(frame_8, Quantity_List[11], "1", "2", "3")
-    option_12a = OptionMenu(frame_8, Size_List[12], "Small", "Medium", "Large")
-    option_12b = OptionMenu(frame_8, Quantity_List[12], "1", "2", "3")
-    option_13a = OptionMenu(frame_9, Size_List[13], "Small", "Medium", "Large")
-    option_13b = OptionMenu(frame_9, Quantity_List[13], "1", "2", "3")
-    option_14a = OptionMenu(frame_9, Size_List[14], "Small", "Medium", "Large")
-    option_14b = OptionMenu(frame_9, Quantity_List[14], "1", "2", "3")
-    option_15a = OptionMenu(frame_9, Size_List[15], "Small", "Medium", "Large")
-    option_15b = OptionMenu(frame_9, Quantity_List[15], "1", "2", "3")
-    option_16a = OptionMenu(frame_9, Size_List[16], "Small", "Medium", "Large")
-    option_16b = OptionMenu(frame_9, Quantity_List[16], "1", "2", "3")
+        label_header = Label(frame_6, text = "PIZZAS", font = ("Comic Sans", 18), bg ="#282827", fg = "ghostwhite", height = 2, width = 30)
+        label_blank1 = Label(frame_6, text = "   ")
+        label_blank2 = Label(frame_6, text = "   ")
+
+        #Pizzas-ImageImport
+        a_1 = img.open("Icons&Images/1.jpg")
+        a_1 = a_1.resize((200, 200), img.ANTIALIAS)
+        b_1 = imgtk.PhotoImage(a_1)
+        a_2 = img.open("Icons&Images/2.jpg")
+        a_2 = a_2.resize((200, 200), img.ANTIALIAS)
+        b_2 = imgtk.PhotoImage(a_2)
+        a_3 = img.open("Icons&Images/3.jpg")
+        a_3 = a_3.resize((200, 200), img.ANTIALIAS)
+        b_3 = imgtk.PhotoImage(a_3)
+        a_4 = img.open("Icons&Images/4.jpg")
+        a_4 = a_4.resize((200, 200), img.ANTIALIAS)
+        b_4 = imgtk.PhotoImage(a_4)
+        a_5 = img.open("Icons&Images/5.jpg")
+        a_5 = a_5.resize((200, 200), img.ANTIALIAS)
+        b_5 = imgtk.PhotoImage(a_5)
+        a_6 = img.open("Icons&Images/6.jpg")
+        a_6 = a_6.resize((200, 200), img.ANTIALIAS)
+        b_6 = imgtk.PhotoImage(a_6)
+        a_7 = img.open("Icons&Images/7.jpg")
+        a_7 = a_7.resize((200, 200), img.ANTIALIAS)
+        b_7 = imgtk.PhotoImage(a_7)
+        a_8 = img.open("Icons&Images/8.jpg")
+        a_8 = a_8.resize((200, 200), img.ANTIALIAS)
+        b_8 = imgtk.PhotoImage(a_8)
+
+        #Veg_Pizzas-Image_Ready
+        label_1 = Label(frame_6, image = b_1)
+        label_1.image = b_1
+        label_name1 = Label(frame_6, text = str(Dict_Name[1]), font = ("Comic Sans", 11))
+        label_2 = Label(frame_6, image = b_2)
+        label_2.image = b_2
+        label_name2 = Label(frame_6, text = str(Dict_Name[2]), font = ("Comic Sans", 11))
+        label_3 = Label(frame_6, image = b_3)
+        label_3.image = b_3
+        label_name3 = Label(frame_6, text = str(Dict_Name[3]), font = ("Comic Sans", 11))
+        label_4 = Label(frame_6, image = b_4)
+        label_4.image = b_4
+        label_name4 = Label(frame_6, text = str(Dict_Name[4]), font = ("Comic Sans", 11))
+        label_5 = Label(frame_6, image = b_5)
+        label_5.image = b_5
+        label_name5 = Label(frame_6, text = str(Dict_Name[5]), font = ("Comic Sans", 11))
+        label_6 = Label(frame_6, image = b_6)
+        label_6.image = b_6
+        label_name6 = Label(frame_6, text = str(Dict_Name[6]), font = ("Comic Sans", 11))
+        label_7 = Label(frame_6, image = b_7)
+        label_7.image = b_7
+        label_name7 = Label(frame_6, text = str(Dict_Name[7]), font = ("Comic Sans", 11))
+        label_8 = Label(frame_6, image = b_8)
+        label_8.image = b_8
+        label_name8 = Label(frame_6, text = str(Dict_Name[8]), font = ("Comic Sans", 11))
+
+        #Price-Labels
+        label_price1 = Label(frame_6, textvariable = PizzasPrices_List[0], font = ("Comic Sans", 10), bg ="gray95", fg = "gray10", height = 3, width = 10)
+        label_price2 = Label(frame_6, textvariable = PizzasPrices_List[1], font = ("Comic Sans", 10), bg ="gray95", fg = "gray10", height = 3, width = 10)
+        label_price3 = Label(frame_6, textvariable = PizzasPrices_List[2], font = ("Comic Sans", 10), bg ="gray95", fg = "gray10", height = 3, width = 10)
+        label_price4 = Label(frame_6, textvariable = PizzasPrices_List[3], font = ("Comic Sans", 10), bg ="gray95", fg = "gray10", height = 3, width = 10)
+        label_price5 = Label(frame_6, textvariable = PizzasPrices_List[4], font = ("Comic Sans", 10), bg ="gray95", fg = "gray10", height = 3, width = 10)
+        label_price6 = Label(frame_6, textvariable = PizzasPrices_List[5], font = ("Comic Sans", 10), bg ="gray95", fg = "gray10", height = 3, width = 10)
+        label_price7 = Label(frame_6, textvariable = PizzasPrices_List[6], font = ("Comic Sans", 10), bg ="gray95", fg = "gray10", height = 3, width = 10)
+        label_price8 = Label(frame_6, textvariable = PizzasPrices_List[7], font = ("Comic Sans", 10), bg ="gray95", fg = "gray10", height = 3, width = 10)
+
+        #Option-Menus
+        option_1a = OptionMenu(frame_6, Size_List[1], "Small", "Medium", "Large")
+        option_1b = OptionMenu(frame_6, Quantity_List[1], "1", "2", "3")
+        option_2a = OptionMenu(frame_6, Size_List[2], "Small", "Medium", "Large")
+        option_2b = OptionMenu(frame_6, Quantity_List[2], "1", "2", "3")
+        option_3a = OptionMenu(frame_6, Size_List[3], "Small", "Medium", "Large")
+        option_3b = OptionMenu(frame_6, Quantity_List[3], "1", "2", "3")
+        option_4a = OptionMenu(frame_6, Size_List[4], "Small", "Medium", "Large")
+        option_4b = OptionMenu(frame_6, Quantity_List[4], "1", "2", "3")
+        option_5a = OptionMenu(frame_6, Size_List[5], "Small", "Medium", "Large")
+        option_5b = OptionMenu(frame_6, Quantity_List[5], "1", "2", "3")
+        option_6a = OptionMenu(frame_6, Size_List[6], "Small", "Medium", "Large")
+        option_6b = OptionMenu(frame_6, Quantity_List[6], "1", "2", "3")
+        option_7a = OptionMenu(frame_6, Size_List[7], "Small", "Medium", "Large")
+        option_7b = OptionMenu(frame_6, Quantity_List[7], "1", "2", "3")
+        option_8a = OptionMenu(frame_6, Size_List[8], "Small", "Medium", "Large")
+        option_8b = OptionMenu(frame_6, Quantity_List[8], "1", "2", "3")
+
+        #AddtoCart Buttons
+        button_1 = Button(frame_6, text="Add To Cart", bg = "gray30", fg = "ghostwhite", command= lambda: DropDown_Input(1))
+        button_2 = Button(frame_6, text="Add To Cart", bg = "gray30", fg = "ghostwhite", command= lambda: DropDown_Input(2))
+        button_3 = Button(frame_6, text="Add To Cart", bg = "gray30", fg = "ghostwhite", command= lambda: DropDown_Input(3))
+        button_4 = Button(frame_6, text="Add To Cart", bg = "gray30", fg = "ghostwhite", command= lambda: DropDown_Input(4))
+        button_5 = Button(frame_6, text="Add To Cart", bg = "gray30", fg = "ghostwhite", command= lambda: DropDown_Input(5))
+        button_6 = Button(frame_6, text="Add To Cart", bg = "gray30", fg = "ghostwhite", command= lambda: DropDown_Input(6))
+        button_7 = Button(frame_6, text="Add To Cart", bg = "gray30", fg = "ghostwhite", command= lambda: DropDown_Input(7))
+        button_8 = Button(frame_6, text="Add To Cart", bg = "gray30", fg = "ghostwhite", command= lambda: DropDown_Input(8))
 
 
-    #OK Buttons
-    button_1 = Button(frame_6, text="OK", command= lambda: DropDown_Input(1))
-    button_2 = Button(frame_6, text="OK", command= lambda: DropDown_Input(2))
-    button_3 = Button(frame_6, text="OK", command= lambda: DropDown_Input(3))
-    button_4 = Button(frame_6, text="OK", command= lambda: DropDown_Input(4))
-    button_5 = Button(frame_7, text="OK", command= lambda: DropDown_Input(5))
-    button_6 = Button(frame_7, text="OK", command= lambda: DropDown_Input(6))
-    button_7 = Button(frame_7, text="OK", command= lambda: DropDown_Input(7))
-    button_8 = Button(frame_7, text="OK", command= lambda: DropDown_Input(8))
-    button_9 = Button(frame_8, text="OK", command= lambda: DropDown_Input(9))
-    button_10 = Button(frame_8, text="OK", command= lambda: DropDown_Input(10))
-    button_11 = Button(frame_8, text="OK", command= lambda: DropDown_Input(11))
-    button_12 = Button(frame_8, text="OK", command= lambda: DropDown_Input(12))
-    button_13 = Button(frame_9, text="OK", command= lambda: DropDown_Input(13))
-    button_14 = Button(frame_9, text="OK", command= lambda: DropDown_Input(14))
-    button_15 = Button(frame_9, text="OK", command= lambda: DropDown_Input(15))
-    button_16 = Button(frame_9, text="OK", command= lambda: DropDown_Input(16))
-    button_17 = Button(frame_9, text="Done!!", command= lambda: DropDown_Input(0))
+        #Packing
+        frame_6.config(bg = "#282827")
+        frame_6.grid(row = 2, column = 0, sticky = W+E)
+        label_header.grid(row = 1, column = 0, columnspan = 8, sticky = W+E)
+        label_blank1.grid(row = 2, rowspan = 11, column = 8)
+        label_blank2.grid(row = 13, columnspan = 9, column = 0)
 
 
-    #Veg_Pizzas-Pack
-    frame_6.pack()
-    label_heading1.grid(row = 0, columnspan = 7, sticky = N)
-    label_1.grid(row = 1, rowspan = 3, column = 0, padx = 20, pady = 20)
-    label_name1.grid(row = 3, column = 0, sticky = S)
-    option_1a.grid(row = 1, column = 1, sticky = S)
-    option_1b.grid(row = 2, column = 1, sticky = N)
-    button_1.grid(row = 3, column = 1, sticky = S)
-    label_2.grid(row = 1, rowspan = 3, column = 2, padx = 20, pady = 20)
-    label_name2.grid(row = 3, column = 2, sticky = S)
-    option_2a.grid(row = 1, column = 3, sticky = S)
-    option_2b.grid(row = 2, column = 3, sticky = N)
-    button_2.grid(row = 3, column = 3)
-    label_3.grid(row = 1, rowspan = 3, column = 4, padx = 20, pady = 20)
-    label_name3.grid(row = 3, column = 4, sticky = S)
-    option_3a.grid(row = 1, column = 5, sticky = S)
-    option_3b.grid(row = 2, column = 5, sticky = N)
-    button_3.grid(row = 3, column = 5)
-    label_4.grid(row = 1, rowspan = 3, column = 6, padx = 20, pady = 20)
-    label_name4.grid(row = 3, column = 6, sticky = S)
-    option_4a.grid(row = 1, column = 7, sticky = S)
-    option_4b.grid(row = 2, column = 7, sticky = N)
-    button_4.grid(row = 3, column = 7)
-    label_100.grid(row = 4, columnspan = 7)
-    ttk.Separator(frame_6).place(x = 0, y = 190, relwidth=2)
+        #Label-Packing
+        label_1.grid(row = 2, rowspan = 4, column = 0, padx = 20, pady = 20)
+        label_name1.grid(row = 6, column = 0, sticky = S)
+        label_2.grid(row = 2, rowspan = 4, column = 2, padx = 20, pady = 20)
+        label_name2.grid(row = 6, column = 2, sticky = S)
+        label_3.grid(row = 2, rowspan = 4, column = 4, padx = 20, pady = 20)
+        label_name3.grid(row = 6, column = 4, sticky = S)
+        label_4.grid(row = 2, rowspan = 4, column = 6, padx = 20, pady = 20)
+        label_name4.grid(row = 6, column = 6, sticky = S)
+        label_5.grid(row = 7, rowspan = 4, column = 0, padx = 20, pady = 20)
+        label_name5.grid(row = 12, column = 0, sticky = S)
+        label_6.grid(row = 7, rowspan = 4, column = 2, padx = 20, pady = 20)
+        label_name6.grid(row = 12, column = 2, sticky = S)
+        label_7.grid(row = 7, rowspan = 4, column = 4, padx = 20, pady = 20)
+        label_name7.grid(row = 12, column = 4, sticky = S)
+        label_8.grid(row = 7, rowspan = 4, column = 6, padx = 20, pady = 20)
+        label_name8.grid(row = 12, column = 6, sticky = S)
 
-    #NonVeg_Pizzas-Pack
-    frame_7.pack()
-    label_heading2.grid(row = 0, columnspan = 7, sticky = N)
-    label_5.grid(row = 1, rowspan = 3, column = 0, padx = 20, pady = 20)
-    label_name5.grid(row = 3, column = 0, sticky = S)
-    option_5a.grid(row = 1, column = 1, sticky = S)
-    option_5b.grid(row = 2, column = 1, sticky = N)
-    button_5.grid(row = 3, column = 1)
-    label_6.grid(row = 1, rowspan = 3, column = 2, padx = 20, pady = 20)
-    label_name6.grid(row = 3, column = 2, sticky = S)
-    option_6a.grid(row = 1, column = 3, sticky = S)
-    option_6b.grid(row = 2, column = 3, sticky = N)
-    button_6.grid(row = 3, column = 3)
-    label_7.grid(row = 1, rowspan = 3, column = 4, padx = 20, pady = 20)
-    label_name7.grid(row = 3, column = 4, sticky = S)
-    option_7a.grid(row = 1, column = 5, sticky = S)
-    option_7b.grid(row = 2, column = 5, sticky = N)
-    button_7.grid(row = 3, column = 5)
-    label_8.grid(row = 1, rowspan = 3, column = 6, padx = 20, pady = 20)
-    label_name8.grid(row = 3, column = 6, sticky = S)
-    option_8a.grid(row = 1, column = 7, sticky = S)
-    option_8b.grid(row = 2, column = 7, sticky = N)
-    button_8.grid(row = 3, column = 7)
-    label_200.grid(row = 4, columnspan = 7)
-    ttk.Separator(frame_7).place(x = 0, y = 360, relwidth=2)
+        #Price-Labels Packing
+        label_price1.grid(row = 4, column = 1, sticky = N)
+        label_price2.grid(row = 4, column = 3, sticky = N)
+        label_price3.grid(row = 4, column = 5, sticky = N)
+        label_price4.grid(row = 4, column = 7, sticky = N)
+        label_price5.grid(row = 9, column = 1, sticky = N)
+        label_price6.grid(row = 9, column = 3, sticky = N)
+        label_price7.grid(row = 9, column = 5, sticky = N)
+        label_price8.grid(row = 9, column = 7, sticky = N)
 
-    #Sides-Pack
-    frame_8.pack()
-    label_heading3.grid(row = 0, columnspan = 7, sticky = N)
-    label_9.grid(row = 1, rowspan = 3, column = 0, padx = 20, pady = 20)
-    label_name9.grid(row = 3, column = 0, sticky = S)
-    option_9a.grid(row = 1, column = 1, sticky = S)
-    option_9b.grid(row = 2, column = 1, sticky = N)
-    button_9.grid(row = 3, column = 1)
-    label_10.grid(row = 1, rowspan = 3, column = 2, padx = 20, pady = 20)
-    label_name10.grid(row = 3, column = 2, sticky = S)
-    option_10a.grid(row = 1, column = 3, sticky = S)
-    option_10b.grid(row = 2, column = 3, sticky = N)
-    button_10.grid(row = 3, column = 3)
-    label_11.grid(row = 1, rowspan = 3, column = 4, padx = 20, pady = 20)
-    label_name11.grid(row = 3, column = 4, sticky = S)
-    option_11a.grid(row = 1, column = 5, sticky = S)
-    option_11b.grid(row = 2, column = 5, sticky = N)
-    button_11.grid(row = 3, column = 5)
-    label_12.grid(row = 1, rowspan = 3, column = 6, padx = 20, pady = 20)
-    label_name12.grid(row = 3, column = 6, sticky = S)
-    option_12a.grid(row = 1, column = 7, sticky = S)
-    option_12b.grid(row = 2, column = 7, sticky = N)
-    button_12.grid(row = 3, column = 7)
-    label_300.grid(row = 4, columnspan = 7)
-    ttk.Separator(frame_8).place(x = 0, y = 540, relwidth=2)
+        #Option-Menu Packing
+        option_1a.grid(row = 2, column = 1, sticky = S)
+        option_1a.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+        option_1b.grid(row = 3, column = 1, sticky = N)
+        option_1b.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+        option_2a.grid(row = 2, column = 3, sticky = S)
+        option_2a.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+        option_2b.grid(row = 3, column = 3, sticky = N)
+        option_2b.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+        option_3a.grid(row = 2, column = 5, sticky = S)
+        option_3a.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+        option_3b.grid(row = 3, column = 5, sticky = N)
+        option_3b.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+        option_4a.grid(row = 2, column = 7, sticky = S)
+        option_4a.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+        option_4b.grid(row = 3, column = 7, sticky = N)
+        option_4b.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+        option_5a.grid(row = 7, column = 1, sticky = S)
+        option_5a.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+        option_5b.grid(row = 8, column = 1, sticky = N)
+        option_5b.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+        option_6a.grid(row = 7, column = 3, sticky = S)
+        option_6a.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+        option_6b.grid(row = 8, column = 3, sticky = N)
+        option_6b.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+        option_7a.grid(row = 7, column = 5, sticky = S)
+        option_7a.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+        option_7b.grid(row = 8, column = 5, sticky = N)
+        option_7b.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+        option_8a.grid(row = 7, column = 7, sticky = S)
+        option_8a.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+        option_8b.grid(row = 8, column = 7, sticky = N)
+        option_8b.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
 
-    #Beverages-Pack
-    frame_9.pack()
-    label_heading4.grid(row = 0, columnspan = 7, sticky = N)
-    label_13.grid(row = 1, rowspan = 3, column = 0, padx = 20, pady = 20)
-    label_name13.grid(row = 3, column = 0, sticky = S)
-    option_13a.grid(row = 1, column = 1, sticky = S)
-    option_13b.grid(row = 2, column = 1, sticky = N)
-    button_13.grid(row = 3, column = 1)
-    label_14.grid(row = 1, rowspan = 3, column = 2, padx = 20, pady = 20)
-    label_name14.grid(row = 3, column = 2, sticky = S)
-    option_14a.grid(row = 1, column = 3, sticky = S)
-    option_14b.grid(row = 2, column = 3, sticky = N)
-    button_14.grid(row = 3, column = 3)
-    label_15.grid(row = 1, rowspan = 3, column = 4, padx = 20, pady = 20)
-    label_name15.grid(row = 3, column = 4, sticky = S)
-    option_15a.grid(row = 1, column = 5, sticky = S)
-    option_15b.grid(row = 2, column = 5, sticky = N)
-    button_15.grid(row = 3, column = 5)
-    label_16.grid(row = 1, rowspan = 3, column = 6, padx = 20, pady = 20)
-    label_name16.grid(row = 3, column = 6, sticky = S)
-    option_16a.grid(row = 1, column = 7, sticky = S)
-    option_16b.grid(row = 2, column = 7, sticky = N)
-    button_16.grid(row = 3, column = 7)
-    button_17.grid(row = 4, column = 7)
-    label_200.grid(row = 5, columnspan = 7)
-    ttk.Separator(frame_9).place(x = 0, y = 730, relwidth=2)
+        #Button Packing
+        button_1.grid(row = 5, column = 1, sticky = N)
+        button_2.grid(row = 5, column = 3, sticky = N)
+        button_3.grid(row = 5, column = 5, sticky = N)
+        button_4.grid(row = 5, column = 7, sticky = N)
+        button_5.grid(row = 10, column = 1, sticky = N)
+        button_6.grid(row = 10, column = 3, sticky = N)
+        button_7.grid(row = 10, column = 5, sticky = N)
+        button_8.grid(row = 10, column = 7, sticky = N)
+
+    def Sides_Pack():
+        frame_6.pack_forget()
+        frame_6.grid_forget()
+        frame_6.place_forget()
+        frame_8.pack_forget()
+        frame_8.grid_forget()
+        frame_8.place_forget()
+
+        label_header = Label(frame_7, text = "SIDES", font = ("Comic Sans", 18), bg ="#282827", fg = "ghostwhite", height = 2, width = 30)
+        label_blank1 = Label(frame_7, text = "                ")
+        label_blank2 = Label(frame_7, text = "   ")
+
+        #Sides-ImageImport
+        a_9 = img.open("Icons&Images/9.jpg")
+        a_9 = a_9.resize((400, 200), img.ANTIALIAS)
+        b_9 = imgtk.PhotoImage(a_9)
+        a_10 = img.open("Icons&Images/10.jpg")
+        a_10 = a_10.resize((400, 200), img.ANTIALIAS)
+        b_10 = imgtk.PhotoImage(a_10)
+        a_11 = img.open("Icons&Images/11.jpg")
+        a_11 = a_11.resize((400, 200), img.ANTIALIAS)
+        b_11 = imgtk.PhotoImage(a_11)
+        a_12 = img.open("Icons&Images/12.jpg")
+        a_12 = a_12.resize((400, 200), img.ANTIALIAS)
+        b_12 = imgtk.PhotoImage(a_12)
+
+        #Sides-Image_Ready
+        label_9 = Label(frame_7, image = b_9)
+        label_name9 = Label(frame_7, text = str(Dict_Name[9]), font = ("Comic Sans", 15))
+        label_9.image = b_9
+        label_10 = Label(frame_7, image = b_10)
+        label_name10 = Label(frame_7, text = str(Dict_Name[10]), font = ("Comic Sans", 15))
+        label_10.image = b_10
+        label_11 = Label(frame_7, image = b_11)
+        label_name11 = Label(frame_7, text = str(Dict_Name[11]), font = ("Comic Sans", 15))
+        label_11.image = b_11
+        label_12 = Label(frame_7, image = b_12)
+        label_name12 = Label(frame_7, text = str(Dict_Name[12]), font = ("Comic Sans", 15))
+        label_12.image = b_12
+
+        #Price-Labels
+        label_price9 = Label(frame_7, textvariable = SidesPrices_List[0], font = ("Comic Sans", 10), bg ="gray95", fg = "gray10", height = 3, width = 10)
+        label_price10 = Label(frame_7, textvariable = SidesPrices_List[1], font = ("Comic Sans", 10), bg ="gray95", fg = "gray10", height = 3, width = 10)
+        label_price11 = Label(frame_7, textvariable = SidesPrices_List[2], font = ("Comic Sans", 10), bg ="gray95", fg = "gray10", height = 3, width = 10)
+        label_price12 = Label(frame_7, textvariable = SidesPrices_List[3], font = ("Comic Sans", 10), bg ="gray95", fg = "gray10", height = 3, width = 10)
+
+        #Option-Menus
+        option_9a = OptionMenu(frame_7, Size_List[9], "Small", "Medium")
+        option_9b = OptionMenu(frame_7, Quantity_List[9], "1", "2", "3")
+        option_10a = OptionMenu(frame_7, Size_List[10], "Small", "Medium")
+        option_10b = OptionMenu(frame_7, Quantity_List[10], "1", "2", "3")
+        option_11a = OptionMenu(frame_7, Size_List[11], "Small", "Medium")
+        option_11b = OptionMenu(frame_7, Quantity_List[11], "1", "2", "3")
+        option_12a = OptionMenu(frame_7, Size_List[12], "Small", "Medium")
+        option_12b = OptionMenu(frame_7, Quantity_List[12], "1", "2", "3")
+
+        #AddtoCart Buttons
+        button_9 = Button(frame_7, text="Add To Cart", bg = "gray30", fg = "ghostwhite", command= lambda: DropDown_Input(9))
+        button_10 = Button(frame_7, text="Add To Cart", bg = "gray30", fg = "ghostwhite", command= lambda: DropDown_Input(10))
+        button_11 = Button(frame_7, text="Add To Cart", bg = "gray30", fg = "ghostwhite", command= lambda: DropDown_Input(11))
+        button_12 = Button(frame_7, text="Add To Cart", bg = "gray30", fg = "ghostwhite", command= lambda: DropDown_Input(12))
+
+
+        #Packing
+        frame_7.config(bg = "#282827")
+        frame_7.grid(row = 2, column = 1, sticky = W+E)
+        label_header.grid(row = 1, column = 0, columnspan = 4, sticky = W+E)
+        label_blank1.grid(row = 2, rowspan = 11, column = 4)
+        label_blank2.grid(row = 12, columnspan = 4, column = 0)
+
+        #Labels-Packing
+        label_9.grid(row = 2, rowspan = 4, column = 0, padx = 50, pady = 20)
+        label_name9.grid(row = 6, column = 0, sticky = S)
+        label_10.grid(row = 2, rowspan = 4, column = 2, padx = 50, pady = 20)
+        label_name10.grid(row = 6, column = 2, sticky = S)
+        label_11.grid(row = 7, rowspan = 4, column = 0, padx = 50, pady = 20)
+        label_name11.grid(row = 11, column = 0, sticky = S)
+        label_12.grid(row = 7, rowspan = 4, column = 2, padx = 50, pady = 20)
+        label_name12.grid(row = 11, column = 2, sticky = S)
+
+        #Price-Labels Packing
+        label_price9.grid(row = 4, column = 1, sticky = N)
+        label_price10.grid(row = 4, column = 3, sticky = N)
+        label_price11.grid(row = 9, column = 1, sticky = N)
+        label_price12.grid(row = 9, column = 3, sticky = N)
+
+        #Option-Menu Packing
+        option_9a.grid(row = 2, column = 1, sticky = S)
+        option_9a.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+        option_9b.grid(row = 3, column = 1, sticky = N)
+        option_9b.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+        option_10a.grid(row = 2, column = 3, sticky = S)
+        option_10a.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+        option_10b.grid(row = 3, column = 3, sticky = N)
+        option_10b.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+        option_11a.grid(row = 7, column = 1, sticky = S)
+        option_11a.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+        option_11b.grid(row = 8, column = 1, sticky = N)
+        option_11b.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+        option_12a.grid(row = 7, column = 3, sticky = S)
+        option_12a.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+        option_12b.grid(row = 8, column = 3, sticky = N)
+        option_12b.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+
+        #Button Packing
+        button_9.grid(row = 5, column = 1, sticky = N)
+        button_10.grid(row = 5, column = 3, sticky = N)
+        button_11.grid(row = 10, column = 1, sticky = N)
+        button_12.grid(row = 10, column = 3, sticky = N)
+
+    def Beverages_Pack():
+        print("d")
+        frame_6.pack_forget()
+        frame_6.grid_forget()
+        frame_6.place_forget()
+        frame_7.pack_forget()
+        frame_7.grid_forget()
+        frame_7.place_forget()
+
+        label_header = Label(frame_8, text = "BEVERAGES", font = ("Comic Sans", 18), bg ="#282827", fg = "ghostwhite", height = 2, width = 30)
+        label_blank1 = Label(frame_8, text = "                ")
+        label_blank2 = Label(frame_8, text = "   ")
+
+        #Sides-ImageImport
+        a_13 = img.open("Icons&Images/13.png")
+        a_13 = a_13.resize((400, 200), img.ANTIALIAS)
+        b_13 = imgtk.PhotoImage(a_13)
+        a_14 = img.open("Icons&Images/14.png")
+        a_14 = a_14.resize((400, 200), img.ANTIALIAS)
+        b_14 = imgtk.PhotoImage(a_14)
+        a_15 = img.open("Icons&Images/15.jpg")
+        a_15 = a_15.resize((400, 200), img.ANTIALIAS)
+        b_15 = imgtk.PhotoImage(a_15)
+        a_16 = img.open("Icons&Images/16.png")
+        a_16 = a_16.resize((400, 200), img.ANTIALIAS)
+        b_16 = imgtk.PhotoImage(a_16)
+
+        #Sides-Image_Ready
+        label_13 = Label(frame_8, image = b_13)
+        label_name13 = Label(frame_8, text = str(Dict_Name[13]), font = ("Comic Sans", 15))
+        label_13.image = b_13
+        label_14 = Label(frame_8, image = b_14)
+        label_name14 = Label(frame_8, text = str(Dict_Name[14]), font = ("Comic Sans", 15))
+        label_14.image = b_14
+        label_15 = Label(frame_8, image = b_15)
+        label_name15 = Label(frame_8, text = str(Dict_Name[15]), font = ("Comic Sans", 15))
+        label_15.image = b_15
+        label_16 = Label(frame_8, image = b_16)
+        label_name16 = Label(frame_8, text = str(Dict_Name[16]), font = ("Comic Sans", 15))
+        label_16.image = b_16
+
+        #Price-Labels
+        label_price13 = Label(frame_8, textvariable = BeveragesPrices_List[0], font = ("Comic Sans", 10), bg ="gray95", fg = "gray10", height = 3, width = 10)
+        label_price14 = Label(frame_8, textvariable = BeveragesPrices_List[1], font = ("Comic Sans", 10), bg ="gray95", fg = "gray10", height = 3, width = 10)
+        label_price15 = Label(frame_8, textvariable = BeveragesPrices_List[2], font = ("Comic Sans", 10), bg ="gray95", fg = "gray10", height = 3, width = 10)
+        label_price16 = Label(frame_8, textvariable = BeveragesPrices_List[3], font = ("Comic Sans", 10), bg ="gray95", fg = "gray10", height = 3, width = 10)
+
+        #Option-Menus
+        option_13a = OptionMenu(frame_8, Size_List[13], "Small", "Medium", "Large")
+        option_13b = OptionMenu(frame_8, Quantity_List[13], "1", "2", "3")
+        option_14a = OptionMenu(frame_8, Size_List[14], "Small", "Medium", "Large")
+        option_14b = OptionMenu(frame_8, Quantity_List[14], "1", "2", "3")
+        option_15a = OptionMenu(frame_8, Size_List[15], "Small", "Medium", "Large")
+        option_15b = OptionMenu(frame_8, Quantity_List[15], "1", "2", "3")
+        option_16a = OptionMenu(frame_8, Size_List[16], "Small", "Medium", "Large")
+        option_16b = OptionMenu(frame_8, Quantity_List[16], "1", "2", "3")
+
+        #AddtoCart Buttons
+        button_13 = Button(frame_8, text="Add To Cart", bg = "gray30", fg = "ghostwhite", command= lambda: DropDown_Input(13))
+        button_14 = Button(frame_8, text="Add To Cart", bg = "gray30", fg = "ghostwhite", command= lambda: DropDown_Input(14))
+        button_15 = Button(frame_8, text="Add To Cart", bg = "gray30", fg = "ghostwhite", command= lambda: DropDown_Input(15))
+        button_16 = Button(frame_8, text="Add To Cart", bg = "gray30", fg = "ghostwhite", command= lambda: DropDown_Input(16))
+
+
+        #Packing
+        frame_8.config(bg = "#282827")
+        frame_8.grid(row = 2, column = 1, sticky = W+E)
+        label_header.grid(row = 1, column = 0, columnspan = 4, sticky = W+E)
+        label_blank1.grid(row = 2, rowspan = 11, column = 4)
+        label_blank2.grid(row = 12, columnspan = 4, column = 0)
+
+        #Labels-Packing
+        label_13.grid(row = 2, rowspan = 4, column = 0, padx = 50, pady = 20)
+        label_name13.grid(row = 6, column = 0, sticky = S)
+        label_14.grid(row = 2, rowspan = 4, column = 2, padx = 50, pady = 20)
+        label_name14.grid(row = 6, column = 2, sticky = S)
+        label_15.grid(row = 7, rowspan = 4, column = 0, padx = 50, pady = 20)
+        label_name15.grid(row = 11, column = 0, sticky = S)
+        label_16.grid(row = 7, rowspan = 4, column = 2, padx = 50, pady = 20)
+        label_name16.grid(row = 11, column = 2, sticky = S)
+
+        #Price-Labels Packing
+        label_price13.grid(row = 4, column = 1, sticky = N)
+        label_price14.grid(row = 4, column = 3, sticky = N)
+        label_price15.grid(row = 9, column = 1, sticky = N)
+        label_price16.grid(row = 9, column = 3, sticky = N)
+
+        #Option-Menu Packing
+        option_13a.grid(row = 2, column = 1, sticky = S)
+        option_13a.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+        option_13b.grid(row = 3, column = 1, sticky = N)
+        option_13b.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+        option_14a.grid(row = 2, column = 3, sticky = S)
+        option_14a.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+        option_14b.grid(row = 3, column = 3, sticky = N)
+        option_14b.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+        option_15a.grid(row = 7, column = 1, sticky = S)
+        option_15a.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+        option_15b.grid(row = 8, column = 1, sticky = N)
+        option_15b.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+        option_16a.grid(row = 7, column = 3, sticky = S)
+        option_16a.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+        option_16b.grid(row = 8, column = 3, sticky = N)
+        option_16b.config(bg ="gray93", fg = "gray10", width = 7, highlightthickness = 0)
+
+        #Button Packing
+        button_13.grid(row = 5, column = 1, sticky = N)
+        button_14.grid(row = 5, column = 3, sticky = N)
+        button_15.grid(row = 10, column = 1, sticky = N)
+        button_16.grid(row = 10, column = 3, sticky = N)
+
+    #Main
+    button_VegPizza = Button(frame_9, text = "PIZZAS", font = ("Comic Sans", 14), bg = "gray20", fg = "white", height = 2, width = 27, command = Pizzas_Pack)
+    button_Sides = Button(frame_9, text = "SIDES", font = ("Comic Sans", 14), bg = "gray20", fg = "white", height = 2, width = 27, command = Sides_Pack)
+    button_Beverages = Button(frame_9, text = "BEVERAGES", font = ("Comic Sans", 14), bg = "gray20", fg = "white", height = 2, width = 27, command = Beverages_Pack)
+    button_Bill = Button(frame_9, text = "BILL", font = ("Comic Sans", 14), bg = "gray20", fg = "ghostwhite", height = 2, width = 27, command = lambda: DropDown_Input(0))
+
+    #Main-Packing
+    frame_menu.config(bg = "#282827")
+    frame_menu.place(x = 35, y = 25)
+
+    #Frame-9(Header)
+    frame_9.config(bg = "#282827")
+    frame_9.grid(row = 1, column = 0, columnspan = 8, sticky = W+E)
+    button_VegPizza.grid(row = 1, column = 0, sticky = W)
+    button_Sides.grid(row = 1, column = 1,)
+    button_Beverages.grid(row = 1, column = 2)
+    button_Bill.grid(row = 1, column = 3, sticky = E)
+
+    Pizzas_Pack()
+
 
 #Order-History Display
 def Step_OrderHistory_Cust():
@@ -928,6 +1109,7 @@ def Step_OrderHistory_Cust():
         n = n + Count_List[z]
         z +=1
 
+
 #Bill Display
 def Step_Bill_Cust(order_list, amount_list):
 
@@ -943,6 +1125,7 @@ def Step_Bill_Cust(order_list, amount_list):
     Label_Quantity_List = []
     Label_Price_List = []
 
+    frame_menu.destroy()
     frame_6.destroy()
     frame_7.destroy()
     frame_8.destroy()
@@ -957,8 +1140,9 @@ def Step_Bill_Cust(order_list, amount_list):
     #StringVars
     for i in order_list:
         #Items Stringvars
+        a = i[0]
         Item = StringVar()
-        Item.set(str(i[0]))
+        Item.set(str(Dict_Name[a]))
         Item_List.append(Item)
 
         #Size Stringvars
@@ -1105,6 +1289,18 @@ def Create_Tables():
                                                    orderDateTime TEXT,
                                                    FOREIGN KEY(custID) REFERENCES Customers(custID))''')
 
+    c.execute('''CREATE TABLE IF NOT EXISTS Addresses(orderNo INTEGER,
+                                        	          custID INTEGER,
+                                        	          addrName TEXT,
+                                        	          addrPhone INTEGER,
+                                        	          addrEmail TEXT,
+                                        	          addrHouseno TEXT,
+                                        	          addrLocality TEXT,
+                                        	          addrCity TEXT,
+                                        	          PRIMARY KEY(orderNo)
+                                                      FOREIGN KEY(custID) REFERENCES Customers(custID))
+                                                      FOREIGN KEY(orderNo) REFERENCES Orders(orderNo)))''')
+
 def Email_Check(email):
 
     if email == '':
@@ -1217,23 +1413,32 @@ def Custdata_entry(phone, name, email, password):
 
 def Orderdata_entry(order_list, amount_list):
 
-    global Order_Total, customerID
+    global Order_Total, customerID, Order_No
 
     c.execute('''SELECT orderNo
                  FROM Orders
                  WHERE orderNo = (SELECT MAX(orderNo) FROM Orders)''')
     a = c.fetchone()
-    order_no = int(a[0] + 1)
+    Order_No = int(a[0] + 1)
 
     order_summ = json.dumps(order_list)
     t = datetime.datetime.now()
     timestamp = t.strftime('%d-%m-%Y %H:%M:%S')
-    print(order_no, customerID, order_list, Order_Total, timestamp)
+    print(Order_No, customerID, order_list, Order_Total, timestamp)
     c.execute('''INSERT INTO Orders(orderNo, custID, orderSummary,
                                     orderTotal, orderDateTime)
-                 VALUES(?,?,?,?,?)''', (order_no, customerID, order_summ, Order_Total, timestamp))
+                 VALUES(?,?,?,?,?)''', (Order_No, customerID, order_summ, Order_Total, timestamp))
 
     conn.commit()
 
+def Addrdata_entry(name, phone, email, houseno, locality, city):
+
+    global cutomerID, Order_No
+
+    c.execute('''INSERT INTO Addresses(orderNo, custID, addrName, addrPhone,
+                                       addrEmail, addrHouseno, addrLocality, addrCity)
+                 VALUES(?,?,?,?,?,?,?,?)''', (Order_No, customerID, name, phone, email, houseno, locality, city))
+
+    conn.commit()
 
 Step_Home()
