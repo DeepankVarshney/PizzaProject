@@ -1,2 +1,2 @@
 # PizzaProject
-Pizza Ordering System
+**An GUI enabled desktop app.**
